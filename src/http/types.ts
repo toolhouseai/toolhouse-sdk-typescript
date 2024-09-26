@@ -10,7 +10,7 @@ export interface SdkConfig {
   baseUrl?: string;
   environment?: Environment;
   timeoutMs?: number;
-  token?: string;
+  apiKey?: string;
   retry?: RetryOptions;
   validation?: ValidationOptions;
 }

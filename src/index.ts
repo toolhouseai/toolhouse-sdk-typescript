@@ -32,8 +32,8 @@ export default class Toolhouse {
     this.tools.timeoutMs = timeoutMs;
   }
 
-  set token(token: string) {
-    this.tools.token = token;
+  set apiKey(apiKey: string) {
+    this.tools.apiKey = apiKey;
   }
 }
 

@@ -18,7 +18,7 @@ export class ToolsService extends BaseService {
    * This endpoint retrieves a list of public tools available on Toolhouse.
    * @returns {Promise<HttpResponse<PublicTool[]>>} Successful Response
    */
-  async toolsToolsGet(requestConfig?: RequestConfig): Promise<HttpResponse<PublicTool[]>> {
+  async tools(requestConfig?: RequestConfig): Promise<HttpResponse<PublicTool[]>> {
     const request = new RequestBuilder<PublicTool[]>()
       .setBaseUrl(this.config)
       .setConfig(this.config)
@@ -39,7 +39,7 @@ export class ToolsService extends BaseService {
    * This endpoint retrieves tools from a specific provider.
    * @returns {Promise<HttpResponse<GetToolsRequestGetToolsPostOkResponse>>} Successful Response
    */
-  async getToolsRequestGetToolsPost(
+  async getTools(
     body: GetToolsRequest,
     requestConfig?: RequestConfig,
   ): Promise<HttpResponse<GetToolsRequestGetToolsPostOkResponse>> {
@@ -65,7 +65,7 @@ export class ToolsService extends BaseService {
    * This endpoint runs a tool based on the specified provider and content.
    * @returns {Promise<HttpResponse<RunToolsResponse>>} Successful Response
    */
-  async runToolsRequestRunToolsPost(
+  async runTools(
     body: RunToolsRequest,
     requestConfig?: RequestConfig,
   ): Promise<HttpResponse<RunToolsResponse>> {

@@ -23,7 +23,7 @@ export class BaseService {
     this.config.timeoutMs = timeoutMs;
   }
 
-  set token(token: string) {
-    this.config.token = token;
+  set apiKey(apiKey: string) {
+    this.config.apiKey = apiKey;
   }
 }
