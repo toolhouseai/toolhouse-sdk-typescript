@@ -29,7 +29,7 @@ import { Toolhouse } from '@toolhouseai/toolhouse-sdk-typescript';
     apiKey: 'YOUR_API_KEY',
   });
 
-  const { data } = await toolhouse.tools.tools();
+  const { data } = await toolhouse.tools();
 
   console.log(data);
 })();
@@ -70,7 +70,7 @@ import { GetToolsRequest, Toolhouse } from '@toolhouseai/toolhouse-sdk-typescrip
     bundle: 'bundle',
   };
 
-  const { data } = await toolhouse.tools.getTools(input);
+  const { data } = await toolhouse.getTools(input);
 
   console.log(data);
 })();
@@ -132,7 +132,7 @@ import {
     bundle: 'bundle',
   };
 
-  const { data } = await toolhouse.tools.runTools(input);
+  const { data } = await toolhouse.runTools(input);
 
   console.log(data);
 })();
