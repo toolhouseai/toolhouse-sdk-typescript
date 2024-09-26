@@ -81,7 +81,7 @@ import { Toolhouse } from '@toolhouseai/toolhouse-sdk-typescript';
     apiKey: 'YOUR_API_KEY',
   });
 
-  const { data } = await toolhouse.tools.tools();
+  const { data } = await toolhouse.tools();
 
   console.log(data);
 })();
