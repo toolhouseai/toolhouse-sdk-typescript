@@ -8,7 +8,7 @@ import Toolhouse from '@toolhouseai/toolhouse-sdk-typescript';
     baseUrl: 'https://g6dywws9a0.execute-api.us-west-2.amazonaws.com/v1'
   });
 
-  const { data } = await toolhouse.tools.tools();
+  const { data } = await toolhouse.tools();
 
   console.log(data);
 })();
