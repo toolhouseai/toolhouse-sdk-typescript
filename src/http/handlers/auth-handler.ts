@@ -18,14 +18,14 @@ export class AuthHandler implements RequestHandler {
   }
 
   private addAccessTokenHeader<T>(request: Request<T>): Request<T> {
-    const { token } = request.config;
-    if (!token) {
+    const { apiKey } = request.config;
+    if (!apiKey) {
       return request;
     }
 
     request.addHeaderParam('Authorization', {
       key: 'Authorization',
-      value: `Bearer ${token}`,
+      value: `Bearer ${apiKey}`,
       explode: false,
       encode: false,
       style: SerializationStyle.SIMPLE,

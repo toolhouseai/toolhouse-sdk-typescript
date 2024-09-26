@@ -51,14 +51,14 @@ This token must be provided to authenticate your requests to the API.
 When you initialize the SDK, you can set the access token as follows:
 
 ```ts
-const sdk = new Toolhouse({ token: 'YOUR_TOKEN' });
+const sdk = new Toolhouse({ apiKey: 'YOUR_API_KEY' });
 ```
 
 If you need to set or update the access token after initializing the SDK, you can use:
 
 ```ts
 const sdk = new Toolhouse();
-sdk.token = 'YOUR_TOKEN';
+sdk.apiKey = 'YOUR_API_KEY';
 ```
 
 ## Setting a Custom Timeout
@@ -78,10 +78,10 @@ import { Toolhouse } from '@toolhouseai/toolhouse-sdk-typescript';
 
 (async () => {
   const toolhouse = new Toolhouse({
-    token: 'YOUR_TOKEN',
+    apiKey: 'YOUR_API_KEY',
   });
 
-  const { data } = await toolhouse.tools.toolsToolsGet();
+  const { data } = await toolhouse.tools.tools();
 
   console.log(data);
 })();

@@ -4,11 +4,11 @@ A list of all methods in the `ToolsService` service. Click on the method name to
 
 | Methods                                                     | Description                                                            |
 | :---------------------------------------------------------- | :--------------------------------------------------------------------- |
-| [toolsToolsGet](#toolstoolsget)                             | This endpoint retrieves a list of public tools available on Toolhouse. |
-| [getToolsRequestGetToolsPost](#gettoolsrequestgettoolspost) | This endpoint retrieves tools from a specific provider.                |
-| [runToolsRequestRunToolsPost](#runtoolsrequestruntoolspost) | This endpoint runs a tool based on the specified provider and content. |
+| [tools](#tools)                             | This endpoint retrieves a list of public tools available on Toolhouse. |
+| [getTools](#gettools) | This endpoint retrieves tools from a specific provider.                |
+| [runTools](#runtools) | This endpoint runs a tool based on the specified provider and content. |
 
-## toolsToolsGet
+## tools
 
 This endpoint retrieves a list of public tools available on Toolhouse.
 
@@ -26,16 +26,16 @@ import { Toolhouse } from '@toolhouseai/toolhouse-sdk-typescript';
 
 (async () => {
   const toolhouse = new Toolhouse({
-    token: 'YOUR_TOKEN',
+    apiKey: 'YOUR_API_KEY',
   });
 
-  const { data } = await toolhouse.tools.toolsToolsGet();
+  const { data } = await toolhouse.tools.tools();
 
   console.log(data);
 })();
 ```
 
-## getToolsRequestGetToolsPost
+## getTools
 
 This endpoint retrieves tools from a specific provider.
 
@@ -59,7 +59,7 @@ import { GetToolsRequest, Toolhouse } from '@toolhouseai/toolhouse-sdk-typescrip
 
 (async () => {
   const toolhouse = new Toolhouse({
-    token: 'YOUR_TOKEN',
+    apiKey: 'YOUR_API_KEY',
   });
 
   const getToolsRequestProvider = GetToolsRequestProvider.OPENAI;
@@ -70,13 +70,13 @@ import { GetToolsRequest, Toolhouse } from '@toolhouseai/toolhouse-sdk-typescrip
     bundle: 'bundle',
   };
 
-  const { data } = await toolhouse.tools.getToolsRequestGetToolsPost(input);
+  const { data } = await toolhouse.tools.getTools(input);
 
   console.log(data);
 })();
 ```
 
-## runToolsRequestRunToolsPost
+## runTools
 
 This endpoint runs a tool based on the specified provider and content.
 
@@ -106,7 +106,7 @@ import {
 
 (async () => {
   const toolhouse = new Toolhouse({
-    token: 'YOUR_TOKEN',
+    apiKey: 'YOUR_API_KEY',
   });
 
   const metadata: Metadata = {
@@ -132,7 +132,7 @@ import {
     bundle: 'bundle',
   };
 
-  const { data } = await toolhouse.tools.runToolsRequestRunToolsPost(input);
+  const { data } = await toolhouse.tools.runTools(input);
 
   console.log(data);
 })();

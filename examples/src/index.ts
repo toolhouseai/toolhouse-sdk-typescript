@@ -4,10 +4,11 @@ import Toolhouse from '@toolhouseai/toolhouse-sdk-typescript';
 
 (async () => {
   const toolhouse = new Toolhouse({
-    token: '0cbecd64-cc45-45c7-829c-a56db6881de1',
+    apiKey: '0cbecd64-cc45-45c7-829c-a56db6881de1',
+    baseUrl: 'https://g6dywws9a0.execute-api.us-west-2.amazonaws.com/v1'
   });
 
-  const { data } = await toolhouse.tools.toolsToolsGet();
+  const { data } = await toolhouse.tools.tools();
 
   console.log(data);
 })();
