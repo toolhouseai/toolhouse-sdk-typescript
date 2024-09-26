@@ -1,0 +1,22 @@
+{
+  "compilerOptions": {
+    "target": "es2018",
+    "module": "Node16",
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "strict": true,
+    "skipLibCheck": true,
+    "outDir": "./dist",
+    "rootDir": "./src",
+    "noImplicitAny": true,
+    "baseUrl": "./",
+    "declaration": true,
+    "moduleResolution": "Node16",
+    "isolatedModules": true,
+    "allowSyntheticDefaultImports": true,
+    "declarationMap": true,
+    "lib": ["es2018", "dom"],
+    "sourceMap": true
+  },
+  "include": ["src/"]
+}

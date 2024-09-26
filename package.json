@@ -1,0 +1,43 @@
+{
+  "name": "@toolhouseai/toolhouse-sdk-typescript",
+  "version": "1.0.0",
+  "description": "Toolhouse API",
+  "source": "./src/index.ts",
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "browser": "./dist/index.js",
+  "unpkg": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "scripts": {
+    "test": "tsc --noEmit",
+    "build": "tsup-node src/index.ts --format cjs,esm --dts --clean",
+    "prepublishOnly": "npm run build"
+  },
+  "keywords": [
+    "typescript",
+    "sdk",
+    "api",
+    "client"
+  ],
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "author": "Toolhouse Technologies",
+  "license": "Apache-2.0",
+  "devDependencies": {
+    "tsup": "^6.7.0",
+    "typescript": "5.3.3"
+  },
+  "dependencies": {
+    "axios": "^1.7.4",
+    "zod": "^3.23.8"
+  },
+  "exports": {
+    ".": {
+      "require": "./dist/index.js",
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  }
+}
