@@ -115,6 +115,7 @@ export default class Toolhouse {
   }
 
   set apiKey(apiKey: string) {
+    this.apiKey = apiKey
     this.config.apiKey = apiKey;
   }
 }
