@@ -8,9 +8,9 @@ dotenv.config();
     baseUrl: 'https://g6dywws9a0.execute-api.us-west-2.amazonaws.com/v1'
   })
 
-  // const { data: tools } = await toolhouse.tools();
-  // console.log(tools);
+  const tools = await toolhouse.tools();
+  console.log(tools);
 
-  const { data: getTools } = await toolhouse.getTools();
+  const getTools = await toolhouse.getTools();
   console.log(getTools);
 })();
