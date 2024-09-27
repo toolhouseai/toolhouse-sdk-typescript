@@ -18,7 +18,7 @@ const toolhouse = new Toolhouse({
 type Tools = Anthropic.Messages.Tool[] | undefined
 
 async function main1() {
-  const { data: allTools } = await toolhouse.getTools()
+  const allTools = await toolhouse.getTools()
   const message = await client.messages.create({
     max_tokens: 1024,
     messages: [{ role: 'user', content: 'Search information about Etiqa s.r.l' }],
@@ -30,7 +30,7 @@ async function main1() {
 }
 
 async function main2() {
-  const { data: bundleTools } = await toolhouse.getTools('bundle1')
+  const bundleTools = await toolhouse.getTools('bundle1')
   const message = await client.messages.create({
     max_tokens: 1024,
     messages: [{ role: 'user', content: 'Search information about Etiqa s.r.l' }],
@@ -38,6 +38,7 @@ async function main2() {
     tools: bundleTools as Tools
   });
 
+  console.log(message);
   console.log(message);
 }
 

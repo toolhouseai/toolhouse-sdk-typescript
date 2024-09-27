@@ -13,21 +13,32 @@ const toolhouse = new Toolhouse({
 })
 
 type Tools = OpenAI.Chat.Completions.ChatCompletionTool[] | undefined
+const messages: OpenAI.Chat.Completions.ChatCompletionMessageParam[] = [{ role: 'user', content: 'Search information about Etiqa s.r.l' }];
 
 async function main1() {
-  const { data: allTools } = await toolhouse.getTools()
+  const allTools = await toolhouse.getTools()
+
   const chatCompletion = await client.chat.completions.create({
-    messages: [{ role: 'user', content: 'Search information about Etiqa s.r.l' }],
+    messages,
     model: 'gpt-3.5-turbo',
     tools: allTools as Tools
   })
 
   console.log(chatCompletion)
+  // const {data: list} = await toolhouse.runTools(chatCompletion, true)
+
+  // unisco i messaggi di run tools con messages  in nuovaLista
+  // const chatCompletion = await client.chat.completions.create({
+  //   messages: nuovaLista,
+  //   model: 'gpt-3.5-turbo',
+  //   tools: allTools as Tools
+  // }) 
+  // ritorna chatCompletion
 }
 async function main2() {
-  const { data: bundleTools } = await toolhouse.getTools('bundle1')
+  const bundleTools = await toolhouse.getTools('bundle1')
   const chatCompletion = await client.chat.completions.create({
-    messages: [{ role: 'user', content: 'Search information about Etiqa s.r.l' }],
+    messages,
     model: 'gpt-3.5-turbo',
     tools: bundleTools as Tools
   })
