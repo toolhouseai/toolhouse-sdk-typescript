@@ -1,14 +1,6 @@
-import z from 'zod';
 import { Environment } from './http/environment';
-import { RequestBuilder } from './http/transport/request-builder';
-import { ContentType, HttpResponse, MetadataType, ProviderTypes, RequestConfig, SdkConfig } from './http/types';
-import { GetToolsRequest, GetToolsRequestGetToolsPostOkResponse, PublicTool, RunToolsRequest, RunToolsResponse } from './services/tools';
-import { publicToolResponse } from './services/tools/models/public-tool';
-import { HttpClient } from './http/client';
-import { getToolsRequestRequest } from './services/tools/models/get-tools-request';
-import { getToolsRequestGetToolsPostOkResponseResponse } from './services/tools/models/get-tools-request-get-tools-post-ok-response';
-import { runToolsRequestRequest } from './services/tools/models/run-tools-request';
-import { runToolsResponseResponse } from './services/tools/models/run-tools-response';
+import { MetadataType, ProviderTypes, RequestConfig, SdkConfig } from './http/types';
+import { GetToolsRequest, GetToolsRequestGetToolsPostOkResponse, PublicTool, RunToolsRequest, RunToolsResponse, ToolsService } from './services/tools';
 import * as dotenv from 'dotenv';
 
 export * from './services/tools';
@@ -25,9 +17,9 @@ if (defaultApiKey === undefined) {
 }
 
 export default class Toolhouse {
-  private _client: HttpClient;
   private _provider: ProviderTypes;
   private _metadata: MetadataType;
+  private _serviceTools: ToolsService;
 
   constructor(public config: SdkConfig) {
     const baseUrl = config.environment || config.baseUrl || Environment.DEFAULT;
@@ -35,102 +27,62 @@ export default class Toolhouse {
       ...config,
       baseUrl,
     };
-    this._client = new HttpClient(this.config);
     this._provider = config.provider ?? 'openai'
     this.apiKey = config.apiKey ?? defaultApiKey!
     this._metadata = config.metadata ?? {}
+    this._serviceTools = new ToolsService(this.config);
   }
 
   /**
- * This endpoint retrieves a list of public tools available on Toolhouse.
- * @returns {Promise<HttpResponse<PublicTool[]>>} Successful Response
- */
-  async tools(requestConfig?: RequestConfig): Promise<HttpResponse<PublicTool[]>> {
-    const request = new RequestBuilder<PublicTool[]>()
-      .setBaseUrl(this.config)
-      .setConfig(this.config)
-      .setMethod('GET')
-      .setPath('/tools')
-      .setRequestSchema(z.any())
-      .setResponseSchema(z.array(publicToolResponse))
-      .setRequestContentType(ContentType.Json)
-      .setResponseContentType(ContentType.Json)
-      .setRetryAttempts(this.config, requestConfig)
-      .setRetryDelayMs(this.config, requestConfig)
-      .setResponseValidation(this.config, requestConfig)
-      .build();
+  * This endpoint retrieves a list of public tools available on Toolhouse.
+  * @returns {PublicTool[]} Successful Response
+  */
+  async tools(requestConfig?: RequestConfig): Promise<PublicTool[] | undefined> {
+    const { data } = await this.serviceTools.tools(requestConfig)
 
-    return this.client.call<PublicTool[]>(request);
+    return data
   }
 
   /**
-* This endpoint retrieves tools from a specific provider.
-* @returns {Promise<HttpResponse<GetToolsRequestGetToolsPostOkResponse>>} Successful Response
-*/
+  * This endpoint retrieves tools from a specific provider.
+  * @returns {Promise<GetToolsRequestGetToolsPostOkResponse>} Successful Response
+  */
   async getTools(
     bundle?: string,
     requestConfig?: RequestConfig,
-  ): Promise<HttpResponse<GetToolsRequestGetToolsPostOkResponse>> {
+  ): Promise<GetToolsRequestGetToolsPostOkResponse | undefined> {
     const body: GetToolsRequest = {
       provider: this.provider,
       metadata: this.metadata,
       bundle: bundle ?? 'default'
     }
-    const request = new RequestBuilder<GetToolsRequestGetToolsPostOkResponse>()
-      .setBaseUrl(this.config)
-      .setConfig(this.config)
-      .setMethod('POST')
-      .setPath('/get_tools')
-      .setRequestSchema(getToolsRequestRequest)
-      .setResponseSchema(getToolsRequestGetToolsPostOkResponseResponse)
-      .setRequestContentType(ContentType.Json)
-      .setResponseContentType(ContentType.Json)
-      .setRetryAttempts(this.config, requestConfig)
-      .setRetryDelayMs(this.config, requestConfig)
-      .setResponseValidation(this.config, requestConfig)
-      .addHeaderParam({ key: 'Content-Type', value: 'application/json' })
-      .addBody(body)
-      .build();
+    const { data } = await this.serviceTools.getTools(body, requestConfig)
 
-    return this.client.call<GetToolsRequestGetToolsPostOkResponse>(request);
+    return data
   }
 
   /**
    * This endpoint runs a tool based on the specified provider and content.
-   * @returns {Promise<HttpResponse<RunToolsResponse>>} Successful Response
+   * @returns {Promise<RunToolsResponse>} Successful Response
    */
   async runTools(
     body: RunToolsRequest,
     requestConfig?: RequestConfig,
-  ): Promise<HttpResponse<RunToolsResponse>> {
-    const request = new RequestBuilder<RunToolsResponse>()
-      .setBaseUrl(this.config)
-      .setConfig(this.config)
-      .setMethod('POST')
-      .setPath('/run_tools')
-      .setRequestSchema(runToolsRequestRequest)
-      .setResponseSchema(runToolsResponseResponse)
-      .setRequestContentType(ContentType.Json)
-      .setResponseContentType(ContentType.Json)
-      .setRetryAttempts(this.config, requestConfig)
-      .setRetryDelayMs(this.config, requestConfig)
-      .setResponseValidation(this.config, requestConfig)
-      .addHeaderParam({ key: 'Content-Type', value: 'application/json' })
-      .addBody(body)
-      .build();
+  ): Promise<RunToolsResponse | undefined> {
+    const { data } = await this.serviceTools.runTools(body, requestConfig)
 
-    return this.client.call<RunToolsResponse>(request);
+    return data
   }
 
-  public get client(): HttpClient {
-    return this._client;
-  }
   public get metadata(): MetadataType {
     return this._metadata;
   }
 
   public get provider(): ProviderTypes {
     return this._provider;
+  }
+  public get serviceTools(): ToolsService {
+    return this._serviceTools;
   }
 
   set baseUrl(baseUrl: string) {
@@ -156,6 +108,10 @@ export default class Toolhouse {
 
   public set provider(provider: ProviderTypes) {
     this._provider = provider;
+  }
+
+  public set serviceTools(tools: ToolsService) {
+    this._serviceTools = tools;
   }
 }
 
