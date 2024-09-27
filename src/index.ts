@@ -72,8 +72,9 @@ export default class Toolhouse {
     requestConfig?: RequestConfig,
   ): Promise<HttpResponse<GetToolsRequestGetToolsPostOkResponse>> {
     const body: GetToolsRequest = {
-      provider: this._provider,
-      bundle: bundle
+      provider: this.provider,
+      metadata: this.metadata,
+      bundle: bundle ?? 'default'
     }
     const request = new RequestBuilder<GetToolsRequestGetToolsPostOkResponse>()
       .setBaseUrl(this.config)
@@ -125,7 +126,11 @@ export default class Toolhouse {
     return this._client;
   }
   public get metadata(): MetadataType {
-    return this.metadata;
+    return this._metadata;
+  }
+
+  public get provider(): ProviderTypes {
+    return this._provider;
   }
 
   set baseUrl(baseUrl: string) {
@@ -149,8 +154,8 @@ export default class Toolhouse {
     this._metadata = { ...this._metadata, ...metadata }
   }
 
-  public set provider(value: ProviderTypes) {
-    this._provider = value;
+  public set provider(provider: ProviderTypes) {
+    this._provider = provider;
   }
 }
 
