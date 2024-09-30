@@ -20,6 +20,7 @@ export default class Toolhouse {
   private _provider: ProviderTypes;
   private _metadata: MetadataType;
   private _serviceTools: ToolsService;
+  private _apiKey: string;
 
   constructor(public config: SdkConfig) {
     const baseUrl = config.environment || config.baseUrl || Environment.DEFAULT;
@@ -29,6 +30,7 @@ export default class Toolhouse {
     };
     this._provider = config.provider ?? 'openai'
     this.apiKey = config.apiKey ?? defaultApiKey!
+    this._apiKey = config.apiKey ?? defaultApiKey!
     this._metadata = config.metadata ?? {}
     this._serviceTools = new ToolsService(this.config);
   }
@@ -81,8 +83,13 @@ export default class Toolhouse {
   public get provider(): ProviderTypes {
     return this._provider;
   }
+
   public get serviceTools(): ToolsService {
     return this._serviceTools;
+  }
+
+  public get apiKey(): string {
+    return this._apiKey;
   }
 
   set baseUrl(baseUrl: string) {
@@ -97,8 +104,8 @@ export default class Toolhouse {
     this.config.timeoutMs = timeoutMs;
   }
 
-  set apiKey(apiKey: string) {
-    this.apiKey = apiKey
+  public set apiKey(apiKey: string) {
+    this._apiKey = apiKey;
     this.config.apiKey = apiKey;
   }
 
