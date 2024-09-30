@@ -23,17 +23,17 @@ async function main() {
     tools
   })
 
-  const openAiMessage = await toolhouse.runTools(chatCompletion)
+  const openAiMessage = await toolhouse.runTools(chatCompletion, true)
   // console.log(JSON.stringify(openAiMessage))
-  const newMessages = [...messages, { ...openAiMessage!.content }] as OpenAiChatCompletionMessage[]
-  console.log(JSON.stringify(newMessages))
+  const newMessages = [...messages, ...openAiMessage] as OpenAiChatCompletionMessage[]
+  // console.log(JSON.stringify(newMessages))
 
-  // const chatCompleted = await client.chat.completions.create({
-  //   messages: newMessages,
-  //   model: 'gpt-3.5-turbo',
-  //   tools
-  // })
-  // console.log(JSON.stringify(chatCompleted))
+  const chatCompleted = await client.chat.completions.create({
+    messages: newMessages,
+    model: 'gpt-3.5-turbo',
+    tools
+  })
+  console.log(JSON.stringify(chatCompleted))
 }
 
 main();

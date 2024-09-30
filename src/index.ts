@@ -1,6 +1,6 @@
 import { Environment } from './http/environment';
 import { MetadataType, ProviderTypes, RequestConfig, SdkConfig } from './http/types';
-import { GetToolsRequest, GetToolsRequestGetToolsPostOkResponse, OpenAiChatCompletion, PublicTool, RunToolsRequest, RunToolsRequestContent, RunToolsResponse, ToolsService } from './services/tools';
+import { GetToolsRequest, GetToolsRequestGetToolsPostOkResponse, OpenAiChatCompletion, PublicTool, RunToolsRequest, RunToolsRequestContent, RunToolsResponseContent, ToolsService } from './services/tools';
 import * as dotenv from 'dotenv';
 
 export * from './services/tools';
@@ -59,29 +59,39 @@ export default class Toolhouse {
 
   /**
    * This endpoint runs a tool based on the specified provider and content.
-   * @returns {Promise<RunToolsResponse>} Successful Response
+   * @returns {Promise<RunToolsResponseContent[]>} Successful Response
    */
   async runTools(
     body: OpenAiChatCompletion,
+    append: boolean,
     requestConfig?: RequestConfig,
-  ): Promise<RunToolsResponse | undefined> {
+  ): Promise<RunToolsResponseContent[]> {
     if (body.choices[0].finish_reason !== 'tool_calls') {
-      return undefined
+      return [];
     }
-    const message = body.choices[0].message
-    if (message.tool_calls == null || message.tool_calls.length === 0)
-      return undefined
-    const content: RunToolsRequestContent = {
-      ...message.tool_calls[0]
-    }
-    const toolBody: RunToolsRequest = {
-      provider: this.provider,
-      metadata: this.metadata,
-      content
-    }
-    const { data } = await this.serviceTools.runTools(toolBody, requestConfig)
 
-    return data
+    const message = body.choices[0].message;
+    const tool_calls = message.tool_calls;
+
+    if (tool_calls == null || tool_calls.length === 0) {
+      return [];
+    }
+
+    const toolCallsPromises = tool_calls.map(async (toolCall) => {
+      const content: RunToolsRequestContent = { ...toolCall };
+      const toolBody: RunToolsRequest = {
+        provider: this.provider,
+        metadata: this.metadata,
+        content
+      };
+
+      const { data } = await this.serviceTools.runTools(toolBody, requestConfig);
+      return data?.content
+    })
+
+    const results = await Promise.all(toolCallsPromises);
+
+    return results.filter((result): result is RunToolsResponseContent => result !== undefined);
   }
 
   public get metadata(): MetadataType {
