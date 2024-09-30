@@ -10,17 +10,10 @@ dotenv.config();
 
 const defaultApiKey = process.env.TOOLHOUSE_API_KEY
 
-if (defaultApiKey === undefined) {
-  console.log('defaultApiKey', defaultApiKey)
-  console.error('Invalid configuration, check your Enviromnent variables')
-  process.exit(0)
-}
-
 export default class Toolhouse {
   private _provider: ProviderTypes;
   private _metadata: MetadataType;
   private _serviceTools: ToolsService;
-  private _apiKey: string;
 
   constructor(public config: SdkConfig) {
     const baseUrl = config.environment || config.baseUrl || Environment.DEFAULT;
@@ -28,9 +21,10 @@ export default class Toolhouse {
       ...config,
       baseUrl,
     };
-    this._provider = config.provider ?? 'openai'
+    if (config.apiKey == null && defaultApiKey == null)
+      throw new Error('Invalid configuration, check your Enviromnent variables')
     this.apiKey = config.apiKey ?? defaultApiKey!
-    this._apiKey = config.apiKey ?? defaultApiKey!
+    this._provider = config.provider ?? 'openai'
     this._metadata = config.metadata ?? {}
     this._serviceTools = new ToolsService(this.config);
   }
@@ -88,10 +82,6 @@ export default class Toolhouse {
     return this._serviceTools;
   }
 
-  public get apiKey(): string {
-    return this._apiKey;
-  }
-
   set baseUrl(baseUrl: string) {
     this.config.baseUrl = baseUrl;
   }
@@ -104,8 +94,7 @@ export default class Toolhouse {
     this.config.timeoutMs = timeoutMs;
   }
 
-  public set apiKey(apiKey: string) {
-    this._apiKey = apiKey;
+  set apiKey(apiKey: string) {
     this.config.apiKey = apiKey;
   }
 
