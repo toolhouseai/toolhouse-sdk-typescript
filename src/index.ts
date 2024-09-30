@@ -1,6 +1,6 @@
 import { Environment } from './http/environment';
 import { MetadataType, ProviderTypes, RequestConfig, SdkConfig } from './http/types';
-import { GetToolsRequest, GetToolsRequestGetToolsPostOkResponse, PublicTool, RunToolsRequest, RunToolsResponse, ToolsService } from './services/tools';
+import { GetToolsRequest, GetToolsRequestGetToolsPostOkResponse, OpenAiChatCompletion, PublicTool, RunToolsRequest, RunToolsRequestContent, RunToolsResponse, ToolsService } from './services/tools';
 import * as dotenv from 'dotenv';
 
 export * from './services/tools';
@@ -62,10 +62,24 @@ export default class Toolhouse {
    * @returns {Promise<RunToolsResponse>} Successful Response
    */
   async runTools(
-    body: RunToolsRequest,
+    body: OpenAiChatCompletion,
     requestConfig?: RequestConfig,
   ): Promise<RunToolsResponse | undefined> {
-    const { data } = await this.serviceTools.runTools(body, requestConfig)
+    if (body.choices[0].finish_reason !== 'tool_calls') {
+      return undefined
+    }
+    const message = body.choices[0].message
+    if (message.tool_calls == null || message.tool_calls.length === 0)
+      return undefined
+    const content: RunToolsRequestContent = {
+      ...message.tool_calls[0]
+    }
+    const toolBody: RunToolsRequest = {
+      provider: this.provider,
+      metadata: this.metadata,
+      content
+    }
+    const { data } = await this.serviceTools.runTools(toolBody, requestConfig)
 
     return data
   }
