@@ -1,8 +1,8 @@
 import { Environment } from './http/environment';
 import { MetadataType, ProviderTypes, RequestConfig, SdkConfig } from './http/types';
-import { GetToolsRequest, OpenAiChatCompletion, OpenAiChatCompletionMessage, OpenAiToolResponse, OpenAiTools, PublicTool, RunToolsRequest, RunToolsRequestContent, ToolsService } from './services/tools';
+import { GetToolsRequest, OpenAiToolResponse, PublicTool, RunToolsRequest, RunToolsRequestContent, ToolsService } from './services/tools';
 import * as dotenv from 'dotenv';
-
+import OpenAI from 'openai';
 export * from './services/tools';
 export type * from './http';
 
@@ -46,7 +46,7 @@ export default class Toolhouse {
   async getTools(
     bundle?: string,
     requestConfig?: RequestConfig,
-  ): Promise<OpenAiTools> {
+  ): Promise<OpenAI.ChatCompletionTool[] | undefined> {
     const body: GetToolsRequest = {
       provider: this.provider,
       metadata: this.metadata,
@@ -54,7 +54,7 @@ export default class Toolhouse {
     }
     const { data } = await this.serviceTools.getTools(body, requestConfig)
 
-    return data as OpenAiTools
+    return data as OpenAI.ChatCompletionTool[] | undefined
   }
 
   /**
@@ -62,10 +62,10 @@ export default class Toolhouse {
    * @returns {Promise<RunToolsResponseContent[]>} Successful Response
    */
   async runTools(
-    body: OpenAiChatCompletion,
+    body: OpenAI.ChatCompletion,
     append?: boolean,
     requestConfig?: RequestConfig,
-  ): Promise<(OpenAiToolResponse | OpenAiChatCompletionMessage)[]> {
+  ): Promise<(OpenAiToolResponse | OpenAI.ChatCompletionMessageParam)[]> {
     if (body.choices[0].finish_reason !== 'tool_calls') {
       return []
     }
@@ -78,20 +78,24 @@ export default class Toolhouse {
     }
 
     const toolCallsPromises = tool_calls.map(async (toolCall) => {
-      const content: RunToolsRequestContent = { ...toolCall }
-      const toolBody: RunToolsRequest = {
-        provider: this.provider,
-        metadata: this.metadata,
-        content
-      }
+      try {
+        const content: RunToolsRequestContent = { ...toolCall }
+        const toolBody: RunToolsRequest = {
+          provider: this.provider,
+          metadata: this.metadata,
+          content
+        }
 
-      const { data } = await this.serviceTools.runTools(toolBody, requestConfig)
-      return data?.content
+        const { data } = await this.serviceTools.runTools(toolBody, requestConfig)
+        return data?.content
+      } catch (error) {
+        console.error("Errore durante l'esecuzione del tool:", error)
+        return undefined
+      }
     })
 
-    const results: (OpenAiToolResponse | OpenAiChatCompletionMessage)[] = (await Promise.all(toolCallsPromises)).filter(
-      (result): result is OpenAiToolResponse => result !== undefined
-    )
+    const results = (await Promise.all(toolCallsPromises))
+      .filter((result) => result !== undefined) as (OpenAiToolResponse | OpenAI.ChatCompletionMessageParam)[]
 
     if (append !== false) {
       results.unshift(message)
