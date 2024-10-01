@@ -32,4 +32,3 @@ export type { OpenAiToolResponse } from './open-ai-tool-response';
 export type { AnthropicToolResponse } from './anthropic-tool-response';
 export type { Role } from './role';
 export type { AnthropicToolResponseType } from './anthropic-tool-response-type';
-export type { OpenAiChatCompletionMessage, OpenAiTools, OpenAiChatCompletion } from './openai-types'
