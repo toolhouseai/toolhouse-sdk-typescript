@@ -3,6 +3,7 @@ import { MetadataType, ProviderTypes, RequestConfig, SdkConfig } from './http/ty
 import { GetToolsRequest, OpenAiToolResponse, PublicTool, RunToolsRequest, RunToolsRequestContent, ToolsService } from './services/tools';
 import * as dotenv from 'dotenv';
 import OpenAI from 'openai';
+import Anthropic from '@anthropic-ai/sdk';
 export * from './services/tools';
 export type * from './http';
 
@@ -39,27 +40,38 @@ export default class Toolhouse {
     return data
   }
 
+  async getTools(provider: 'openai', bundle?: string, requestConfig?: RequestConfig): Promise<OpenAI.ChatCompletionTool[] | undefined>;
+  async getTools(provider: 'anthropic', bundle?: string, requestConfig?: RequestConfig): Promise<Anthropic.Messages.Tool[] | undefined>;
   /**
   * This endpoint retrieves tools from a specific provider.
-  * @returns {Promise<GetToolsRequestGetToolsPostOkResponse>} Successful Response
+  * @returns {Promise<OpenAI.ChatCompletionTool[] | Anthropic.Messages.Tool[]>} Successful Response
   */
   async getTools(
+    provider: ProviderTypes,
     bundle?: string,
     requestConfig?: RequestConfig,
-  ): Promise<OpenAI.ChatCompletionTool[] | undefined> {
+  ): Promise<OpenAI.ChatCompletionTool[] | Anthropic.Messages.Tool[] | undefined> {
     const body: GetToolsRequest = {
-      provider: this.provider,
+      provider: provider,
       metadata: this.metadata,
-      bundle: bundle ?? 'default'
-    }
-    const { data } = await this.serviceTools.getTools(body, requestConfig)
+      bundle: bundle ?? 'default',
+    };
+    const { data } = await this.serviceTools.getTools(body, requestConfig);
 
-    return data as OpenAI.ChatCompletionTool[] | undefined
+    if (data == null) return data
+
+    if (provider === 'openai') {
+      return data as OpenAI.ChatCompletionTool[]
+    } else if (provider === 'anthropic') {
+      return data as Anthropic.Messages.Tool[]
+    }
+
+    throw new Error(`Unsupported provider: ${provider}`);
   }
 
   /**
    * This endpoint runs a tool based on the specified provider and content.
-   * @returns {Promise<RunToolsResponseContent[]>} Successful Response
+   * @returns {Promise<OpenAiToolResponse | OpenAI.ChatCompletionMessageParam[]>} Successful Response
    */
   async runTools(
     body: OpenAI.ChatCompletion,

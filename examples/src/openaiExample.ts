@@ -13,8 +13,7 @@ async function main() {
   })
   const messages: OpenAI.Chat.Completions.ChatCompletionMessageParam[] = [{ role: 'user', content: 'Search information about Etiqa s.r.l' }]
 
-  const tools = await toolhouse.getTools()
-
+  const tools = await toolhouse.getTools('openai')
   const chatCompletion = await client.chat.completions.create({
     messages,
     model: 'gpt-3.5-turbo',
