@@ -23,9 +23,9 @@ async function main() {
     tools
   })
 
-  const openAiMessage = await toolhouse.runTools(chatCompletion, true)
+  const openAiMessage = await toolhouse.runTools(chatCompletion) as OpenAiChatCompletionMessage[]
   // console.log(JSON.stringify(openAiMessage))
-  const newMessages = [...messages, ...openAiMessage] as OpenAiChatCompletionMessage[]
+  const newMessages = [...messages, ...openAiMessage]
   // console.log(JSON.stringify(newMessages))
 
   const chatCompleted = await client.chat.completions.create({
