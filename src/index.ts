@@ -1,9 +1,10 @@
 import { Environment } from './http/environment';
 import { MetadataType, ProviderTypes, RequestConfig, SdkConfig } from './http/types';
-import { GetToolsRequest, OpenAiToolResponse, PublicTool, RunToolsRequest, RunToolsRequestContent, ToolsService } from './services/tools';
+import { AnthropicToolResponse, GetToolsRequest, OpenAiToolResponse, PublicTool, RunToolsRequest, RunToolsRequestContent, ToolsService } from './services/tools';
 import * as dotenv from 'dotenv';
 import OpenAI from 'openai';
 import Anthropic from '@anthropic-ai/sdk';
+import { AnthropicToolResponseMessage } from './services/tools/models/anthropic-tool-response';
 export * from './services/tools';
 export type * from './http';
 
@@ -70,50 +71,115 @@ export default class Toolhouse {
   }
 
   /**
+ * This endpoint runs a tool based on the specified provider and content.
+ * @returns {Promise<OpenAiToolResponse | OpenAI.ChatCompletionMessageParam[]>} Successful Response for OpenAI
+ */
+  async runTools(body: OpenAI.ChatCompletion, provider: 'openai', append?: boolean, requestConfig?: RequestConfig): Promise<(OpenAiToolResponse | OpenAI.ChatCompletionMessageParam)[]>
+
+  /**
    * This endpoint runs a tool based on the specified provider and content.
-   * @returns {Promise<OpenAiToolResponse | OpenAI.ChatCompletionMessageParam[]>} Successful Response
+   * @returns {Promise<AnthropicToolResponse | Anthropic.Messages.Message[]>} Successful Response for Anthropic
+   */
+  async runTools(body: Anthropic.Messages.Message, provider: 'anthropic', append?: boolean, requestConfig?: RequestConfig): Promise<(Anthropic.Messages.MessageParam)[]>
+
+  /**
+   * This endpoint runs a tool based on the specified provider and content.
+   * @returns {Promise<OpenAiToolResponse | OpenAI.ChatCompletionMessageParam[] | Anthropic.Messages.MessageParam[]>} Successful Response
    */
   async runTools(
-    body: OpenAI.ChatCompletion,
+    body: OpenAI.ChatCompletion | Anthropic.Messages.Message,
+    provider: ProviderTypes,
     append?: boolean,
-    requestConfig?: RequestConfig,
-  ): Promise<(OpenAiToolResponse | OpenAI.ChatCompletionMessageParam)[]> {
-    if (body.choices[0].finish_reason !== 'tool_calls') {
-      return []
-    }
-
-    const message = body.choices[0].message;
-    const tool_calls = message.tool_calls;
-
-    if (tool_calls == null || tool_calls.length === 0) {
-      return []
-    }
-
-    const toolCallsPromises = tool_calls.map(async (toolCall) => {
-      try {
-        const content: RunToolsRequestContent = { ...toolCall }
-        const toolBody: RunToolsRequest = {
-          provider: this.provider,
-          metadata: this.metadata,
-          content
+    requestConfig?: RequestConfig
+  ): Promise<(OpenAiToolResponse | OpenAI.ChatCompletionMessageParam)[] | (Anthropic.Messages.MessageParam)[]> {
+    if (provider === 'openai') {
+      if ('choices' in body) {
+        if (body.choices[0].finish_reason !== 'tool_calls') {
+          return [];
         }
 
-        const { data } = await this.serviceTools.runTools(toolBody, requestConfig)
-        return data?.content
-      } catch (error) {
-        console.error("Errore durante l'esecuzione del tool:", error)
-        return undefined
+        const message = body.choices[0].message;
+        const tool_calls = message.tool_calls;
+
+        if (tool_calls == null || tool_calls.length === 0) {
+          return [];
+        }
+
+        const toolCallsPromises = tool_calls.map(async (toolCall) => {
+          try {
+            const content: RunToolsRequestContent = { ...toolCall };
+            const toolBody: RunToolsRequest = {
+              provider: this.provider,
+              metadata: this.metadata,
+              content,
+            };
+
+            const { data } = await this.serviceTools.runTools(toolBody, requestConfig);
+            return data?.content;
+          } catch (error) {
+            return undefined;
+          }
+        });
+
+        const results = (await Promise.all(toolCallsPromises))
+          .filter((result) => result !== undefined) as (OpenAiToolResponse | OpenAI.ChatCompletionMessageParam)[];
+
+        if (append !== false) {
+          results.unshift(message);
+        }
+
+        return results;
       }
-    })
+    } else if (provider === 'anthropic') {
+      if ('content' in body) {
+        if (body.stop_reason !== 'tool_use') {
+          return [];
+        }
 
-    const results = (await Promise.all(toolCallsPromises))
-      .filter((result) => result !== undefined) as (OpenAiToolResponse | OpenAI.ChatCompletionMessageParam)[]
+        const tool_calls = body.content;
 
-    if (append !== false) {
-      results.unshift(message)
+        if (tool_calls == null || tool_calls.length === 0) {
+          return [];
+        }
+
+        const toolCallsPromises = tool_calls.map(async (toolCall) => {
+          try {
+            if (toolCall.type === 'tool_use') {
+              const content: RunToolsRequestContent = { ...toolCall };
+              const toolBody: RunToolsRequest = {
+                provider: this.provider,
+                metadata: this.metadata,
+                content,
+              };
+
+              const { data } = await this.serviceTools.runTools(toolBody, requestConfig)
+
+              return data?.content
+            } else if (toolCall.type === 'text') {
+              return undefined;
+            } else {
+              return undefined;
+            }
+          } catch (error) {
+            return undefined;
+          }
+        });
+
+        const results = (await Promise.all(toolCallsPromises))
+          .filter((result) => result !== undefined) as (AnthropicToolResponse | Anthropic.Messages.MessageParam)[];
+
+        const messages = [{ role: 'user', content: results }]
+
+        if (append !== false) {
+          const message = { role: 'assistant', content: tool_calls }
+          messages.unshift(message as any)
+        }
+
+        return messages as Anthropic.Messages.MessageParam[]
+      }
     }
 
-    return results
+    return [];
   }
 
   public get metadata(): MetadataType {

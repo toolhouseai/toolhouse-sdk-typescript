@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { anthropicToolResponseType } from './anthropic-tool-response-type';
+import Anthropic from '@anthropic-ai/sdk';
 
 /**
  * The shape of the model inside the application code - what the users use
@@ -20,6 +21,7 @@ export const anthropicToolResponse = z.lazy(() => {
  * @property {AnthropicToolResponseType}
  */
 export type AnthropicToolResponse = z.infer<typeof anthropicToolResponse>;
+export type AnthropicToolResponseMessage = { content: Anthropic.Messages.ContentBlock[], role: 'assistant' }
 
 /**
  * The shape of the model mapping from the api schema into the application shape.

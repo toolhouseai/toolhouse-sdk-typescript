@@ -20,7 +20,7 @@ async function main() {
     tools
   })
 
-  const openAiMessage = await toolhouse.runTools(chatCompletion)
+  const openAiMessage = await toolhouse.runTools(chatCompletion, 'openai')
 
   const newMessages = [...messages, ...openAiMessage]
   const chatCompleted = await client.chat.completions.create({

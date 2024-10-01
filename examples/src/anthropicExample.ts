@@ -12,17 +12,27 @@ async function main() {
     baseUrl: 'https://g6dywws9a0.execute-api.us-west-2.amazonaws.com/v1',
     provider: 'anthropic'
   })
+  const messages: Anthropic.Messages.MessageParam[] = [{ role: 'user', content: 'Search information about Etiqa s.r.l' }]
 
   const tools = await toolhouse.getTools('anthropic')
-
   const message = await client.messages.create({
     max_tokens: 1024,
-    messages: [{ role: 'user', content: 'Search information about Etiqa s.r.l' }],
+    messages,
     model: 'claude-3-opus-20240229',
     tools
-  });
+  })
 
-  console.log(JSON.stringify(message))
+  const anthropicMessage = await toolhouse.runTools(message, 'anthropic')
+
+  const newMessages = [...messages, ...anthropicMessage]
+  const chatCompleted = await client.messages.create({
+    max_tokens: 1024,
+    messages: newMessages,
+    model: 'claude-3-opus-20240229',
+    tools
+  })
+
+  console.log(JSON.stringify(chatCompleted))
 }
 
 main()
