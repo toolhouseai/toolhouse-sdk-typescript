@@ -31,6 +31,7 @@
     "typescript": "5.3.3"
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "^0.27.3",
     "axios": "^1.7.4",
     "dotenv": "^16.4.5",
     "openai": "^4.66.1",
