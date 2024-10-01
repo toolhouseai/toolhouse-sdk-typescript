@@ -11,6 +11,6 @@ dotenv.config();
   const tools = await toolhouse.tools();
   console.log(tools);
 
-  const getTools = await toolhouse.getTools();
+  const getTools = await toolhouse.getTools('openai');
   console.log(getTools);
 })();
