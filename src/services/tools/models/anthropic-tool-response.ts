@@ -6,7 +6,7 @@ import { anthropicToolResponseType } from './anthropic-tool-response-type';
  */
 export const anthropicToolResponse = z.lazy(() => {
   return z.object({
-    toolUseId: z.string(),
+    tool_use_id: z.string(),
     content: z.string(),
     type: anthropicToolResponseType,
   });
@@ -33,7 +33,7 @@ export const anthropicToolResponseResponse = z.lazy(() => {
       type: anthropicToolResponseType,
     })
     .transform((data) => ({
-      toolUseId: data['tool_use_id'],
+      tool_use_id: data['tool_use_id'],
       content: data['content'],
       type: data['type'],
     }));
@@ -46,12 +46,12 @@ export const anthropicToolResponseResponse = z.lazy(() => {
 export const anthropicToolResponseRequest = z.lazy(() => {
   return z
     .object({
-      toolUseId: z.string().nullish(),
+      tool_use_id: z.string().nullish(),
       content: z.string().nullish(),
       type: anthropicToolResponseType.nullish(),
     })
     .transform((data) => ({
-      tool_use_id: data['toolUseId'],
+      tool_use_id: data['tool_use_id'],
       content: data['content'],
       type: data['type'],
     }));

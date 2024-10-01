@@ -5,8 +5,8 @@ import { z } from 'zod';
  */
 export const metadata = z.lazy(() => {
   return z.object({
-    toolhouseId: z.string().optional().nullable(),
-    toolhouseTimezone: z.number().optional().nullable(),
+    toolhouse_id: z.string().optional().nullable(),
+    toolhouse_timezone: z.number().optional().nullable(),
   });
 });
 
@@ -29,8 +29,8 @@ export const metadataResponse = z.lazy(() => {
       toolhouse_timezone: z.number().optional().nullable(),
     })
     .transform((data) => ({
-      toolhouseId: data['toolhouse_id'],
-      toolhouseTimezone: data['toolhouse_timezone'],
+      toolhouse_id: data['toolhouse_id'],
+      toolhouse_timezone: data['toolhouse_timezone'],
     }));
 });
 
@@ -39,8 +39,8 @@ export const metadataResponse = z.lazy(() => {
  * Is equal to application shape if all property names match the api schema
  */
 export const metadataRequest = z.lazy(() => {
-  return z.object({ toolhouseId: z.string().nullish(), toolhouseTimezone: z.number().nullish() }).transform((data) => ({
-    toolhouse_id: data['toolhouseId'],
-    toolhouse_timezone: data['toolhouseTimezone'],
+  return z.object({ toolhouse_id: z.string().nullish(), toolhouse_timezone: z.number().nullish() }).transform((data) => ({
+    toolhouse_id: data['toolhouse_id'],
+    toolhouse_timezone: data['toolhouse_timezone'],
   }));
 });

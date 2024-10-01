@@ -8,7 +8,7 @@ export const toolhouseApiModelsProvidersProvidersToolsAnthropicTool = z.lazy(() 
   return z.object({
     name: z.string(),
     description: z.string(),
-    inputSchema: inputSchema,
+    input_schema: inputSchema,
   });
 });
 
@@ -37,7 +37,7 @@ export const toolhouseApiModelsProvidersProvidersToolsAnthropicToolResponse = z.
     .transform((data) => ({
       name: data['name'],
       description: data['description'],
-      inputSchema: data['input_schema'],
+      input_schema: data['input_schema'],
     }));
 });
 
@@ -50,11 +50,11 @@ export const toolhouseApiModelsProvidersProvidersToolsAnthropicToolRequest = z.l
     .object({
       name: z.string().nullish(),
       description: z.string().nullish(),
-      inputSchema: inputSchemaRequest.nullish(),
+      input_schema: inputSchemaRequest.nullish(),
     })
     .transform((data) => ({
       name: data['name'],
       description: data['description'],
-      input_schema: data['inputSchema'],
+      input_schema: data['input_schema'],
     }));
 });
