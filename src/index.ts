@@ -1,6 +1,6 @@
 import { Environment } from './http/environment';
 import { MetadataType, ProviderTypes, RequestConfig, SdkConfig } from './http/types';
-import { GetToolsRequest, GetToolsRequestGetToolsPostOkResponse, OpenAiChatCompletion, PublicTool, RunToolsRequest, RunToolsRequestContent, RunToolsResponseContent, ToolsService } from './services/tools';
+import { GetToolsRequest, GetToolsRequestGetToolsPostOkResponse, OpenAiChatCompletion, OpenAiChatCompletionMessage, PublicTool, RunToolsRequest, RunToolsRequestContent, RunToolsResponseContent, ToolsService } from './services/tools';
 import * as dotenv from 'dotenv';
 
 export * from './services/tools';
@@ -63,7 +63,7 @@ export default class Toolhouse {
    */
   async runTools(
     body: OpenAiChatCompletion,
-    append: boolean,
+    append?: boolean,
     requestConfig?: RequestConfig,
   ): Promise<RunToolsResponseContent[]> {
     if (body.choices[0].finish_reason !== 'tool_calls') {
@@ -78,18 +78,21 @@ export default class Toolhouse {
     }
 
     const toolCallsPromises = tool_calls.map(async (toolCall) => {
-      const content: RunToolsRequestContent = { ...toolCall };
+      const content: RunToolsRequestContent = { ...toolCall }
       const toolBody: RunToolsRequest = {
         provider: this.provider,
         metadata: this.metadata,
         content
-      };
+      }
 
-      const { data } = await this.serviceTools.runTools(toolBody, requestConfig);
+      const { data } = await this.serviceTools.runTools(toolBody, requestConfig)
       return data?.content
     })
-
-    const results = await Promise.all(toolCallsPromises);
+    //(RunToolsResponseContent | OpenAiChatCompletionMessage)
+    const results: any[] = await Promise.all(toolCallsPromises);
+    if (append !== false) {
+      results.unshift(message)
+    }
 
     return results.filter((result): result is RunToolsResponseContent => result !== undefined);
   }

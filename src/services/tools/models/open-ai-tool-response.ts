@@ -7,7 +7,7 @@ import { role } from './role';
 export const openAiToolResponse = z.lazy(() => {
   return z.object({
     role: role,
-    toolCallId: z.string(),
+    tool_call_id: z.string(),
     name: z.string(),
     content: z.string(),
   });
@@ -37,7 +37,7 @@ export const openAiToolResponseResponse = z.lazy(() => {
     })
     .transform((data) => ({
       role: data['role'],
-      toolCallId: data['tool_call_id'],
+      tool_call_id: data['tool_call_id'],
       name: data['name'],
       content: data['content'],
     }));
@@ -51,13 +51,13 @@ export const openAiToolResponseRequest = z.lazy(() => {
   return z
     .object({
       role: role.nullish(),
-      toolCallId: z.string().nullish(),
+      tool_call_id: z.string().nullish(),
       name: z.string().nullish(),
       content: z.string().nullish(),
     })
     .transform((data) => ({
       role: data['role'],
-      tool_call_id: data['toolCallId'],
+      tool_call_id: data['tool_call_id'],
       name: data['name'],
       content: data['content'],
     }));
