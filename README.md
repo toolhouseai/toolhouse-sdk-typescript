@@ -18,10 +18,9 @@ Toolhouse API
   - [Installation](#installation)
 - [Authentication](#authentication)
   - [Access Token Authentication](#access-token-authentication)
-- [Setting a Custom Timeout](#setting-a-custom-timeout)
+- [Setting Options](#Other-configuration-options)
 - [Sample Usage](#sample-usage)
 - [Services](#services)
-- [Models](#models)
 - [License](#license)
 
 # Setup & Configuration
@@ -38,6 +37,11 @@ To get started with the SDK, we recommend installing using `npm`:
 npm install @toolhouseai/toolhouse-sdk-typescript
 ```
 
+or `yarn`
+```bash
+yarn add @toolhouseai/toolhouse-sdk-typescript
+```
+
 ## Authentication
 
 ### Access Token Authentication
@@ -46,27 +50,30 @@ The Toolhouse API uses an Access Token for authentication.
 
 This token must be provided to authenticate your requests to the API.
 
+You need to register at [toolhouse](https://app.toolhouse.ai/) and obtain an API Key
+
 #### Setting the Access Token
 
 When you initialize the SDK, you can set the access token as follows:
 
 ```ts
-const sdk = new Toolhouse({ apiKey: 'YOUR_API_KEY' });
+const toolhouse = new Toolhouse({
+    apiKey: process.env['TOOLHOUSE_API_KEY']
+  })
 ```
+apiKey is the only mandatory param, represent the API key required to authenticate with the tool provider.
 
-If you need to set or update the access token after initializing the SDK, you can use:
+You can check the working examples in this [folder](/examples).
 
+## Other configuration options
+
+- provider: Specifies the provider, such as 'openai' or 'anthropic'. Defaults to 'openai'.
+- baseUrl: Optionally specify the base URL for API requests.
+- timeoutMs: The timeout for API requests, in milliseconds.
+
+example:
 ```ts
-const sdk = new Toolhouse();
-sdk.apiKey = 'YOUR_API_KEY';
-```
-
-## Setting a Custom Timeout
-
-You can set a custom timeout for the SDK's HTTP requests as follows:
-
-```ts
-const toolhouse = new Toolhouse({ timeout: 10000 });
+const toolhouse = new Toolhouse({apiKey: process.env['TOOLHOUSE_API_KEY'], timeoutMs: 10000 });
 ```
 
 # Sample Usage
@@ -74,66 +81,103 @@ const toolhouse = new Toolhouse({ timeout: 10000 });
 Below is a comprehensive example demonstrating how to authenticate and call a simple endpoint:
 
 ```ts
-import { Toolhouse } from '@toolhouseai/toolhouse-sdk-typescript';
+import Toolhouse from '@toolhouseai/toolhouse-sdk-typescript';
+import * as dotenv from 'dotenv';
 
-(async () => {
+dotenv.config();
+
+async function main() {
   const toolhouse = new Toolhouse({
-    apiKey: 'YOUR_API_KEY',
-  });
+    apiKey: process.env['TOOLHOUSE_API_KEY']
+  })
 
-  const { data } = await toolhouse.tools();
-
-  console.log(data);
-})();
+  const tools = await toolhouse.tools();
+  console.log(tools);
+}
+main()
 ```
 
 ## Services
+### Methods
 
-The SDK provides various services to interact with the API.
+#### tools
+>tools(requestConfig?: RequestConfig): Promise<PublicTool[] | undefined>
+This method retrieves a list of public tools available from Toolhouse.
 
-<details> 
-<summary>Below is a list of all available services with links to their detailed documentation:</summary>
+```ts
+const tools = await sdk.tools();
+console.log(tools);
+```
 
-| Name                                                   |
-| :----------------------------------------------------- |
-| [ToolsService](documentation/services/ToolsService.md) |
+requestConfig: Optional. Provides configuration like headers and query parameters.
+Returns: A list of PublicTool[] or undefined if no tools are available.
 
-</details>
+#### getTools
+>getTools(bundle?: string, requestConfig?: RequestConfig): Promise<OpenAI.ChatCompletionTool[] | Anthropic.Messages.Tool[]>
+This method fetches tools from a specific provider, either OpenAI or Anthropic.
 
-## Models
+```ts
+const tools = await sdk.getTools();
+console.log(tools);
+```
+<detail>
+bundle: Optional. Specify the bundle of tools (defaults to 'default').
+requestConfig: Optional. Provides configuration like headers and query parameters.
+Returns: A list of tools specific to the chosen provider.
+</detail>
 
-The SDK includes several models that represent the data structures used in API requests and responses. These models help in organizing and managing the data efficiently.
+#### runTools
+> runTools(body: OpenAI.ChatCompletion | Anthropic.Messages.Message, append?: boolean, requestConfig?: RequestConfig): Promise<(OpenAiToolResponse | OpenAI.ChatCompletionMessageParam)[] | Anthropic.Messages.MessageParam[]>
 
-<details> 
-<summary>Below is a list of all available models with links to their detailed documentation:</summary>
+This method runs tools based on the provider and provided content, using either OpenAI or Anthropic.
 
-| Name                                                                                                                                     | Description                                          |
-| :--------------------------------------------------------------------------------------------------------------------------------------- | :--------------------------------------------------- |
-| [PublicTool](documentation/models/PublicTool.md)                                                                                         | ToolHouse Tools Configuration                        |
-| [GetToolsRequest](documentation/models/GetToolsRequest.md)                                                                               | Represents a tool call for Toolhouse.                |
-| [GetToolsRequestGetToolsPostOkResponse](documentation/models/GetToolsRequestGetToolsPostOkResponse.md)                                   |                                                      |
-| [RunToolsRequest](documentation/models/RunToolsRequest.md)                                                                               | Represents a tool call for Toolhouse.                |
-| [RunToolsResponse](documentation/models/RunToolsResponse.md)                                                                             | Represents the results of a tool call for Toolhouse. |
-| [Argument](documentation/models/Argument.md)                                                                                             | Tool Arguments                                       |
-| [ToolhouseApiModelsProvidersProvidersToolsOpenaiTool](documentation/models/ToolhouseApiModelsProvidersProvidersToolsOpenaiTool.md)       |                                                      |
-| [ToolhouseApiModelsProvidersProvidersToolsAnthropicTool](documentation/models/ToolhouseApiModelsProvidersProvidersToolsAnthropicTool.md) |                                                      |
-| [Function\_](documentation/models/Function_.md)                                                                                          |                                                      |
-| [Parameters](documentation/models/Parameters.md)                                                                                         |                                                      |
-| [Property](documentation/models/Property.md)                                                                                             |                                                      |
-| [InputSchema](documentation/models/InputSchema.md)                                                                                       |                                                      |
-| [Metadata](documentation/models/Metadata.md)                                                                                             | Metadata Model                                       |
-| [AntropicToolRequest](documentation/models/AntropicToolRequest.md)                                                                       |                                                      |
-| [OpenAiToolRequest](documentation/models/OpenAiToolRequest.md)                                                                           | Represents a tool call for OpenAI.                   |
-| [OpenAiFunction](documentation/models/OpenAiFunction.md)                                                                                 | Represents a function call for OpenAI.               |
-| [OpenAiToolResponse](documentation/models/OpenAiToolResponse.md)                                                                         | Represents the results of a tool call for OpenAI.    |
-| [AnthropicToolResponse](documentation/models/AnthropicToolResponse.md)                                                                   | Represents the results of a tool call for Anthropic. |
+```ts
+const response = await sdk.runTools({
+  id: 'example-id',
+  choices: [{ message: { tool_calls: ['tool_name'] } }],
+});
+console.log(response);
+```
+body: The content required to execute tools, provided in the format specific to OpenAI or Anthropic.
+append: Optional. If true, the response is appended to the original message.
+requestConfig: Optional. Provides configuration like headers and query parameters.
+Returns: A list of responses from the tools, depending on the provider.
 
-</details>
+### Accessor Methods
+#### metadata
+Retrieve or set the metadata used in tool requests.
+
+```ts
+console.log(sdk.metadata);
+sdk.metadata = { newKey: 'newValue' };
+```
+#### provider
+Retrieve or set the provider for tool requests.
+
+```ts
+console.log(sdk.provider);
+sdk.provider = 'anthropic';
+```
+
+#### serviceTools
+Retrieve or set the ToolsService object used internally.
+
+```ts
+console.log(sdk.serviceTools);
+sdk.serviceTools = new ToolsService(newConfig);
+```
+
+#### Error Handling
+```ts
+try {
+  const tools = await sdk.tools();
+} catch (error) {
+  console.error(error.message);
+}
+```
 
 ## License
 
 This SDK is licensed under the Apache-2.0 License.
 
 See the [LICENSE](LICENSE) file for more details.
-
-<!-- This file was generated by liblab | https://liblab.com/ -->

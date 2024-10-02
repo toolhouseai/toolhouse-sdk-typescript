@@ -1,16 +1,11 @@
 import { Environment } from './http/environment';
 import { MetadataType, ProviderTypes, RequestConfig, SdkConfig } from './http/types';
-import { AnthropicToolResponse, GetToolsRequest, OpenAiToolResponse, PublicTool, RunToolsRequest, RunToolsRequestContent, ToolsService } from './services/tools';
+import { GetToolsRequest, OpenAiToolResponse, PublicTool, RunToolsRequest, RunToolsRequestContent, ToolsService } from './services/tools';
 import OpenAI from 'openai';
 import Anthropic from '@anthropic-ai/sdk';
-import * as dotenv from 'dotenv';
 
 export * from './services/tools';
 export type * from './http';
-
-dotenv.config();
-
-const defaultApiKey = process.env.TOOLHOUSE_API_KEY
 
 export default class Toolhouse {
   private _provider: ProviderTypes;
@@ -23,9 +18,9 @@ export default class Toolhouse {
       ...config,
       baseUrl,
     };
-    if (config.apiKey == null && defaultApiKey == null)
+    if (config.apiKey == null)
       throw new Error('Invalid configuration, check your Enviromnent variables')
-    this.apiKey = config.apiKey ?? defaultApiKey!
+    this.apiKey = config.apiKey
     this._provider = config.provider ?? 'openai'
     this._metadata = config.metadata ?? {}
     this._serviceTools = new ToolsService(this.config);
