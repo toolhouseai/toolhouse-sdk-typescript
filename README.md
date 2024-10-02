@@ -132,11 +132,15 @@ Returns: A list of tools specific to the chosen provider.
 This method runs tools based on the provider and provided content, using either OpenAI or Anthropic.
 
 ```ts
-const response = await sdk.runTools({
-  id: 'example-id',
-  choices: [{ message: { tool_calls: ['tool_name'] } }],
-});
-console.log(response);
+const tools = await toolhouse.getTools()
+  const chatCompletion = await client.chat.completions.create({
+    messages,
+    model: 'gpt-3.5-turbo',
+    tools
+  })
+
+  const openAiMessage = await toolhouse.runTools(chatCompletion)
+  console.log(openAiMessage)
 ```
 body: The content required to execute tools, provided in the format specific to OpenAI or Anthropic.
 append: Optional. If true, the response is appended to the original message.
@@ -157,14 +161,6 @@ Retrieve or set the provider for tool requests.
 ```ts
 console.log(sdk.provider);
 sdk.provider = 'anthropic';
-```
-
-#### serviceTools
-Retrieve or set the ToolsService object used internally.
-
-```ts
-console.log(sdk.serviceTools);
-sdk.serviceTools = new ToolsService(newConfig);
 ```
 
 #### Error Handling
