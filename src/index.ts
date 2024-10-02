@@ -1,10 +1,10 @@
 import { Environment } from './http/environment';
 import { MetadataType, ProviderTypes, RequestConfig, SdkConfig } from './http/types';
 import { AnthropicToolResponse, GetToolsRequest, OpenAiToolResponse, PublicTool, RunToolsRequest, RunToolsRequestContent, ToolsService } from './services/tools';
-import * as dotenv from 'dotenv';
 import OpenAI from 'openai';
 import Anthropic from '@anthropic-ai/sdk';
-import { AnthropicToolResponseMessage } from './services/tools/models/anthropic-tool-response';
+import * as dotenv from 'dotenv';
+
 export * from './services/tools';
 export type * from './http';
 
@@ -41,46 +41,25 @@ export default class Toolhouse {
     return data
   }
 
-  async getTools(provider: 'openai', bundle?: string, requestConfig?: RequestConfig): Promise<OpenAI.ChatCompletionTool[] | undefined>;
-  async getTools(provider: 'anthropic', bundle?: string, requestConfig?: RequestConfig): Promise<Anthropic.Messages.Tool[] | undefined>;
   /**
   * This endpoint retrieves tools from a specific provider.
   * @returns {Promise<OpenAI.ChatCompletionTool[] | Anthropic.Messages.Tool[]>} Successful Response
   */
   async getTools(
-    provider: ProviderTypes,
     bundle?: string,
-    requestConfig?: RequestConfig,
-  ): Promise<OpenAI.ChatCompletionTool[] | Anthropic.Messages.Tool[] | undefined> {
+    requestConfig?: RequestConfig
+  ): Promise<OpenAI.ChatCompletionTool[] | Anthropic.Messages.Tool[]> {
     const body: GetToolsRequest = {
-      provider: provider,
+      provider: this.provider,
       metadata: this.metadata,
       bundle: bundle ?? 'default',
     };
     const { data } = await this.serviceTools.getTools(body, requestConfig);
 
-    if (data == null) return data
+    if (data == null) return []
 
-    if (provider === 'openai') {
-      return data as OpenAI.ChatCompletionTool[]
-    } else if (provider === 'anthropic') {
-      return data as Anthropic.Messages.Tool[]
-    }
-
-    throw new Error(`Unsupported provider: ${provider}`);
+    return data
   }
-
-  /**
- * This endpoint runs a tool based on the specified provider and content.
- * @returns {Promise<OpenAiToolResponse | OpenAI.ChatCompletionMessageParam[]>} Successful Response for OpenAI
- */
-  async runTools(body: OpenAI.ChatCompletion, provider: 'openai', append?: boolean, requestConfig?: RequestConfig): Promise<(OpenAiToolResponse | OpenAI.ChatCompletionMessageParam)[]>
-
-  /**
-   * This endpoint runs a tool based on the specified provider and content.
-   * @returns {Promise<AnthropicToolResponse | Anthropic.Messages.Message[]>} Successful Response for Anthropic
-   */
-  async runTools(body: Anthropic.Messages.Message, provider: 'anthropic', append?: boolean, requestConfig?: RequestConfig): Promise<(Anthropic.Messages.MessageParam)[]>
 
   /**
    * This endpoint runs a tool based on the specified provider and content.
@@ -88,11 +67,10 @@ export default class Toolhouse {
    */
   async runTools(
     body: OpenAI.ChatCompletion | Anthropic.Messages.Message,
-    provider: ProviderTypes,
     append?: boolean,
     requestConfig?: RequestConfig
   ): Promise<(OpenAiToolResponse | OpenAI.ChatCompletionMessageParam)[] | (Anthropic.Messages.MessageParam)[]> {
-    if (provider === 'openai') {
+    if (this.provider === 'openai') {
       if ('choices' in body) {
         if (body.choices[0].finish_reason !== 'tool_calls') {
           return [];
@@ -117,7 +95,7 @@ export default class Toolhouse {
             const { data } = await this.serviceTools.runTools(toolBody, requestConfig);
             return data?.content;
           } catch (error) {
-            return undefined;
+            return [];
           }
         });
 
@@ -130,7 +108,7 @@ export default class Toolhouse {
 
         return results;
       }
-    } else if (provider === 'anthropic') {
+    } else if (this.provider === 'anthropic') {
       if ('content' in body) {
         if (body.stop_reason !== 'tool_use') {
           return [];
@@ -156,26 +134,26 @@ export default class Toolhouse {
 
               return data?.content
             } else if (toolCall.type === 'text') {
-              return undefined;
+              return [];
             } else {
-              return undefined;
+              return [];
             }
           } catch (error) {
-            return undefined;
+            return [];
           }
         });
 
         const results = (await Promise.all(toolCallsPromises))
-          .filter((result) => result !== undefined) as (AnthropicToolResponse | Anthropic.Messages.MessageParam)[];
+          .filter((result) => result !== undefined) as Anthropic.Messages.ToolResultBlockParam[];
 
-        const messages = [{ role: 'user', content: results }]
+        const messages: Anthropic.Messages.MessageParam[] = [{ role: 'user', content: results }]
 
         if (append !== false) {
-          const message = { role: 'assistant', content: tool_calls }
-          messages.unshift(message as any)
+          const message: Anthropic.Messages.MessageParam = { role: 'assistant', content: tool_calls }
+          messages.unshift(message)
         }
 
-        return messages as Anthropic.Messages.MessageParam[]
+        return messages
       }
     }
 
