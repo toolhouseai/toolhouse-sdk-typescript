@@ -1,6 +1,7 @@
 import { Environment } from './http/environment';
 import { MetadataType, ProviderTypes, RequestConfig, SdkConfig } from './http/types';
 import { GetToolsRequest, OpenAiToolResponse, PublicTool, RunToolsRequest, RunToolsRequestContent, ToolsService } from './services/tools';
+import { CoreTool, jsonSchema } from 'ai';
 import OpenAI from 'openai';
 import Anthropic from '@anthropic-ai/sdk';
 
@@ -154,6 +155,55 @@ export default class Toolhouse {
 
     return [];
   }
+
+  /**
+  * This endpoint retrieves tools from a specific provider ready to be used by Vercel.
+  * @returns {Promise<Record<string, CoreTool<any, any>>>} Successful Response
+  */
+  async getVercelTools(
+    bundle?: string,
+    requestConfig?: RequestConfig
+  ): Promise<Record<string, CoreTool<any, any>>> {
+    const body: GetToolsRequest = {
+      provider: this.provider,
+      metadata: this.metadata,
+      bundle: bundle ?? 'default'
+    }
+    const { data } = await this.serviceTools.getTools(body, requestConfig)
+    const tools: Record<string, CoreTool<any, any>> = {}
+    if (data == null) return tools
+
+    data.forEach(tool => {
+      let toolName, toolDescription, toolProperties, requiredFields;
+
+      if ('function' in tool) {
+        toolName = tool.function.name;
+        toolDescription = tool.function.description;
+        toolProperties = tool.function.parameters?.properties ?? {};
+        requiredFields = tool.required ?? [];
+      } else {
+        toolName = tool.name;
+        toolDescription = tool.description;
+        toolProperties = tool.input_schema?.properties ?? {};
+        requiredFields = tool.input_schema.required ?? [];
+      }
+
+      tools[toolName] = {
+        description: toolDescription,
+        parameters: jsonSchema({
+          type: 'object',
+          properties: toolProperties,
+          required: requiredFields,
+        }),
+        execute: async (params) => {
+          return null;
+        }
+      }
+    })
+
+    return tools
+  }
+
 
   public get metadata(): MetadataType {
     return this._metadata;

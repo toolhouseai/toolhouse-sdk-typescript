@@ -10,8 +10,8 @@ dotenv.config();
   })
 
   const tools = await toolhouse.tools();
-  console.log(tools);
+  console.log(JSON.stringify(tools))
 
   const getTools = await toolhouse.getTools();
-  console.log(getTools);
+  console.log(JSON.stringify(getTools))
 })();
