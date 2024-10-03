@@ -90,7 +90,7 @@ export default class Toolhouse {
             const { data } = await this.serviceTools.runTools(toolBody, requestConfig);
             return data?.content;
           } catch (error) {
-            return [];
+            return undefined;
           }
         });
 
@@ -129,12 +129,12 @@ export default class Toolhouse {
 
               return data?.content
             } else if (toolCall.type === 'text') {
-              return [];
+              return undefined;
             } else {
-              return [];
+              return undefined;
             }
           } catch (error) {
-            return [];
+            return undefined;
           }
         });
 
