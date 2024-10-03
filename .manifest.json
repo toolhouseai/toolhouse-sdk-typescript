@@ -6,12 +6,18 @@
     "sdkName": "toolhouse",
     "sdkVersion": "1.0.0",
     "liblabVersion": "2",
-    "deliveryMethods": ["zip"],
-    "languages": ["typescript"],
+    "deliveryMethods": [
+      "zip"
+    ],
+    "languages": [
+      "typescript"
+    ],
     "apiVersion": "1.0.0",
     "apiName": "toolhouse-api",
     "specFilePath": "docs_v2.json",
-    "auth": ["bearer"],
+    "auth": [
+      "bearer"
+    ],
     "languageOptions": {
       "typescript": {
         "bundle": true,
@@ -53,8 +59,23 @@
       "maxDelay": 5000,
       "retryDelayJitter": 50,
       "backOffFactor": 2,
-      "httpCodesToRetry": [408, 429, 500, 502, 503, 504],
-      "httpMethodsToRetry": ["GET", "POST", "PUT", "DELETE", "PATCH", "HEAD", "OPTIONS"]
+      "httpCodesToRetry": [
+        408,
+        429,
+        500,
+        502,
+        503,
+        504
+      ],
+      "httpMethodsToRetry": [
+        "GET",
+        "POST",
+        "PUT",
+        "DELETE",
+        "PATCH",
+        "HEAD",
+        "OPTIONS"
+      ]
     },
     "multiTenant": true,
     "includeWatermark": true,
@@ -77,7 +98,10 @@
     "compilerOptions": {
       "target": "es6",
       "module": "Node16",
-      "lib": ["es2018", "dom"]
+      "lib": [
+        "es2018",
+        "dom"
+      ]
     },
     "usesFormData": false,
     "environmentVariables": [],
@@ -87,7 +111,9 @@
       "packages": {
         "axios": "^1.7.4"
       },
-      "languages": ["typescript"]
+      "languages": [
+        "typescript"
+      ]
     },
     "customQueries": {
       "paths": [],
@@ -156,11 +182,6 @@
     "src/http/handlers/response-validation-handler.ts",
     "src/http/handlers/auth-handler.ts",
     "./LICENSE",
-    "documentation/models/GetToolsRequestGetToolsPostOkResponse.md",
-    "documentation/models/ToolhouseApiModelsProvidersProvidersToolsAnthropicTool.md",
-    "documentation/models/Function_.md",
-    "documentation/models/Metadata.md",
-    "documentation/models/OpenAiFunction.md",
     "src/http/handlers/request-validation-handler.ts",
     ".devcontainer/devcontainer.json",
     "src/http/transport/request.ts",
@@ -171,20 +192,6 @@
     "src/http/serialization/header-serializer.ts",
     "src/http/transport/request-axios-adapter.ts",
     "src/http/transport/transport-hook-adapter.ts",
-    "documentation/models/PublicTool.md",
-    "documentation/models/GetToolsRequest.md",
-    "documentation/models/ToolhouseApiModelsProvidersProvidersToolsOpenaiTool.md",
-    "documentation/models/Parameters.md",
-    "documentation/models/Property.md",
-    "documentation/models/InputSchema.md",
-    "documentation/models/AntropicToolRequest.md",
-    "documentation/models/OpenAiToolRequest.md",
-    "documentation/models/OpenAiToolResponse.md",
-    "documentation/models/AnthropicToolResponse.md",
-    "documentation/models/RunToolsRequest.md",
-    "documentation/models/RunToolsResponse.md",
-    "documentation/models/Argument.md",
-    "documentation/services/ToolsService.md",
     "README.md"
   ]
 }
