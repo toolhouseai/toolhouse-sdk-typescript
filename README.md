@@ -105,7 +105,7 @@ main()
 This method retrieves a list of public tools available from Toolhouse.
 
 ```ts
-const tools = await sdk.tools();
+const tools = await toolhouse.tools();
 console.log(tools);
 ```
 
@@ -117,7 +117,7 @@ Returns: A list of PublicTool[] or undefined if no tools are available.
 This method fetches tools from a specific provider, either OpenAI or Anthropic.
 
 ```ts
-const tools = await sdk.getTools();
+const tools = await toolhouse.getTools();
 console.log(tools);
 ```
 <detail>
@@ -152,21 +152,21 @@ Returns: A list of responses from the tools, depending on the provider.
 Retrieve or set the metadata used in tool requests.
 
 ```ts
-console.log(sdk.metadata);
-sdk.metadata = { newKey: 'newValue' };
+console.log(toolhouse.metadata);
+toolhouse.metadata = { newKey: 'newValue' };
 ```
 #### provider
 Retrieve or set the provider for tool requests.
 
 ```ts
-console.log(sdk.provider);
-sdk.provider = 'anthropic';
+console.log(toolhouse.provider);
+toolhouse.provider = 'anthropic';
 ```
 
 #### Error Handling
 ```ts
 try {
-  const tools = await sdk.tools();
+  const tools = await toolhouse.tools();
 } catch (error) {
   console.error(error.message);
 }
