@@ -1,5 +1,22 @@
 import { z } from 'zod';
 import { inputSchema, inputSchemaRequest, inputSchemaResponse } from './input-schema';
+import { argument } from './argument';
+
+/**
+ * The shape of the model inside the application code - what the users use
+ */
+export const toolhouseApiModelsBaseProvider = z.lazy(() => {
+  return z.object({
+    name: z.string(),
+    title: z.string(),
+    description: z.string(),
+    arguments: z.array(argument),
+  });
+});
+
+export type ToolhouseApiModelsBaseProvider = z.infer<
+  typeof toolhouseApiModelsBaseProvider
+>;
 
 /**
  * The shape of the model inside the application code - what the users use

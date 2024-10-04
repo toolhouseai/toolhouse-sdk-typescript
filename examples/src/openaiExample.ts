@@ -6,7 +6,6 @@ dotenv.config();
 
 async function main() {
   const toolhouse = new Toolhouse({
-    baseUrl: 'https://g6dywws9a0.execute-api.us-west-2.amazonaws.com/v1',
     apiKey: process.env['TOOLHOUSE_API_KEY']
   })
   const client = new OpenAI({
