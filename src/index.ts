@@ -2,6 +2,7 @@ import { Environment } from './http/environment';
 import { MetadataType, ProviderTypes, RequestConfig, SdkConfig } from './http/types';
 import { GetToolsRequest, OpenAiToolResponse, PublicTool, RunToolsRequest, RunToolsRequestContent, ToolsService } from './services/tools';
 import { CoreTool, jsonSchema } from 'ai';
+import { ToolhouseApiModelsBaseProvider } from './services/tools/models/toolhouse-api-models-providers-providers-tools-anthropic-tool';
 import OpenAI from 'openai';
 import Anthropic from '@anthropic-ai/sdk';
 
@@ -39,12 +40,12 @@ export default class Toolhouse {
 
   /**
   * This endpoint retrieves tools from a specific provider.
-  * @returns {Promise<OpenAI.ChatCompletionTool[] | Anthropic.Messages.Tool[]>} Successful Response
+  * @returns {Promise<OpenAI.ChatCompletionTool[] | Anthropic.Messages.Tool[] | Record<string, CoreTool<any, any>>>} Successful Response
   */
   async getTools(
     bundle?: string,
     requestConfig?: RequestConfig
-  ): Promise<OpenAI.ChatCompletionTool[] | Anthropic.Messages.Tool[]> {
+  ): Promise<OpenAI.ChatCompletionTool[] | Anthropic.Messages.Tool[] | Record<string, CoreTool<any, any>>> {
     const body: GetToolsRequest = {
       provider: this.provider,
       metadata: this.metadata,
@@ -54,7 +55,48 @@ export default class Toolhouse {
 
     if (data == null) return []
 
-    return data
+    if (this.provider === 'vercel_ai') {
+      const body: GetToolsRequest = {
+        provider: this.provider,
+        metadata: this.metadata,
+        bundle: bundle ?? 'default'
+      }
+      const { data } = await this.serviceTools.getTools(body, requestConfig)
+
+      if (data == null) return []
+
+      return (data as ToolhouseApiModelsBaseProvider[]).reduce((tools, tool) => {
+        tools[tool.name] = {
+          description: tool.description,
+          parameters: jsonSchema({
+            type: 'object',
+            properties: tool.arguments ?? {}
+          }),
+          execute: async (params) => {
+            const toolBody: RunToolsRequest = {
+              provider: this.provider,
+              metadata: this.metadata,
+              content: {
+                name: tool.name,
+                arguments: params
+              } as any
+            }
+
+            try {
+              const { data } = await this.serviceTools.runTools(toolBody, requestConfig)
+              return data?.content
+            } catch (error) {
+              console.error(`Error during tool '${tool.name}' execution:`, error)
+              return null
+            }
+          }
+        }
+
+        return tools
+      }, {} as Record<string, CoreTool<any, any>>)
+    }
+
+    return data as OpenAI.ChatCompletionTool[] | Anthropic.Messages.Tool[]
   }
 
   /**
@@ -155,55 +197,6 @@ export default class Toolhouse {
 
     return [];
   }
-
-  /**
-  * This endpoint retrieves tools from a specific provider ready to be used by Vercel.
-  * @returns {Promise<Record<string, CoreTool<any, any>>>} Successful Response
-  */
-  async getVercelTools(
-    bundle?: string,
-    requestConfig?: RequestConfig
-  ): Promise<Record<string, CoreTool<any, any>>> {
-    const body: GetToolsRequest = {
-      provider: this.provider,
-      metadata: this.metadata,
-      bundle: bundle ?? 'default'
-    }
-    const { data } = await this.serviceTools.getTools(body, requestConfig)
-    const tools: Record<string, CoreTool<any, any>> = {}
-    if (data == null) return tools
-
-    data.forEach(tool => {
-      let toolName, toolDescription, toolProperties, requiredFields;
-
-      if ('function' in tool) {
-        toolName = tool.function.name;
-        toolDescription = tool.function.description;
-        toolProperties = tool.function.parameters?.properties ?? {};
-        requiredFields = tool.required ?? [];
-      } else {
-        toolName = tool.name;
-        toolDescription = tool.description;
-        toolProperties = tool.input_schema?.properties ?? {};
-        requiredFields = tool.input_schema.required ?? [];
-      }
-
-      tools[toolName] = {
-        description: toolDescription,
-        parameters: jsonSchema({
-          type: 'object',
-          properties: toolProperties,
-          required: requiredFields,
-        }),
-        execute: async (params) => {
-          return null;
-        }
-      }
-    })
-
-    return tools
-  }
-
 
   public get metadata(): MetadataType {
     return this._metadata;

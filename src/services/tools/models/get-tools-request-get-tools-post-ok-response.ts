@@ -3,6 +3,7 @@ import {
   toolhouseApiModelsProvidersProvidersToolsOpenaiTool,
 } from './toolhouse-api-models-providers-providers-tools-openai-tool';
 import {
+  toolhouseApiModelsBaseProvider,
   toolhouseApiModelsProvidersProvidersToolsAnthropicTool,
 } from './toolhouse-api-models-providers-providers-tools-anthropic-tool';
 
@@ -13,6 +14,7 @@ export const getToolsRequestGetToolsPostOkResponse = z.lazy(() => {
   return z.union([
     z.array(toolhouseApiModelsProvidersProvidersToolsOpenaiTool),
     z.array(toolhouseApiModelsProvidersProvidersToolsAnthropicTool),
+    z.array(toolhouseApiModelsBaseProvider),
   ]);
 });
 
@@ -21,6 +23,7 @@ export const getToolsRequestGetToolsPostOkResponse = z.lazy(() => {
  * @typedef  {GetToolsRequestGetToolsPostOkResponse} getToolsRequestGetToolsPostOkResponse
  * @property {ToolhouseApiModelsProvidersProvidersToolsOpenaiTool[]}
  * @property {ToolhouseApiModelsProvidersProvidersToolsAnthropicTool[]}
+ * @property {ToolhouseApiModelsBaseProvider[]}
  */
 export type GetToolsRequestGetToolsPostOkResponse = z.infer<typeof getToolsRequestGetToolsPostOkResponse>;
 
@@ -32,6 +35,7 @@ export const getToolsRequestGetToolsPostOkResponseResponse = z.lazy(() => {
   return z.union([
     z.array(toolhouseApiModelsProvidersProvidersToolsOpenaiTool),
     z.array(toolhouseApiModelsProvidersProvidersToolsAnthropicTool),
+    z.array(toolhouseApiModelsBaseProvider),
   ]);
 });
 
@@ -43,5 +47,6 @@ export const getToolsRequestGetToolsPostOkResponseRequest = z.lazy(() => {
   return z.union([
     z.array(toolhouseApiModelsProvidersProvidersToolsOpenaiTool),
     z.array(toolhouseApiModelsProvidersProvidersToolsAnthropicTool),
+    z.array(toolhouseApiModelsBaseProvider),
   ]);
 });

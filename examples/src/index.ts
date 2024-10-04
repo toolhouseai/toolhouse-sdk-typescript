@@ -5,13 +5,14 @@ dotenv.config();
 
 (async () => {
   const toolhouse = new Toolhouse({
-    baseUrl: 'https://g6dywws9a0.execute-api.us-west-2.amazonaws.com/v1',
+    // baseUrl: 'https://g6dywws9a0.execute-api.us-west-2.amazonaws.com/v1',
+    baseUrl: 'https://api.testing.toolhouse.ai/v1',
     apiKey: process.env['TOOLHOUSE_API_KEY']
   })
 
   const tools = await toolhouse.tools();
   console.log(JSON.stringify(tools))
 
-  const getTools = await toolhouse.getTools();
-  console.log(JSON.stringify(getTools))
+  // const getTools = await toolhouse.getTools();
+  // console.log(JSON.stringify(getTools))
 })();

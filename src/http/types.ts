@@ -3,7 +3,7 @@ import { Environment } from './environment';
 import { Request } from './transport/request';
 
 export type HttpMethod = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE' | 'HEAD';
-export type ProviderTypes = 'openai' | 'anthropic' | 'openai_assistants'
+export type ProviderTypes = 'openai' | 'anthropic' | 'openai_assistants' | 'vercel_ai'
 export type MetadataType = Record<string, any>
 
 export interface SdkConfig {
