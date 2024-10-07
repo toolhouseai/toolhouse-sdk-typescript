@@ -2,7 +2,7 @@ import { Environment } from './http/environment';
 import { MetadataType, ProviderTypes, RequestConfig, SdkConfig } from './http/types';
 import { GetToolsRequest, OpenAiToolResponse, PublicTool, RunToolsRequest, RunToolsRequestContent, ToolsService } from './services/tools';
 import { CoreTool, jsonSchema } from 'ai';
-import { ToolhouseApiModelsBaseProvider } from './services/tools/models/toolhouse-api-models-providers-providers-tools-anthropic-tool';
+import { ToolhouseApiModelsGenericProvider } from './services/tools/models/toolhouse-api-models-providers-providers-tools-anthropic-tool';
 import OpenAI from 'openai';
 import Anthropic from '@anthropic-ai/sdk';
 
@@ -55,41 +55,22 @@ export default class Toolhouse {
 
     if (data == null) return []
 
-    if (this.provider === 'vercel_ai') {
-      const body: GetToolsRequest = {
-        provider: this.provider,
-        metadata: this.metadata,
-        bundle: bundle ?? 'default'
-      }
-      const { data } = await this.serviceTools.getTools(body, requestConfig)
+    if (this.provider === 'vercel') {
 
-      if (data == null) return []
-
-      return (data as ToolhouseApiModelsBaseProvider[]).reduce((tools, tool) => {
+      return (data as ToolhouseApiModelsGenericProvider[]).reduce((tools, tool) => {
         tools[tool.name] = {
           description: tool.description,
           parameters: jsonSchema({
             type: 'object',
-            properties: tool.arguments ?? {}
-          }),
-          execute: async (params) => {
-            const toolBody: RunToolsRequest = {
-              provider: this.provider,
-              metadata: this.metadata,
-              content: {
-                name: tool.name,
-                arguments: params
-              } as any
-            }
+            properties: tool.arguments.reduce((args, argument) => {
+              args[argument.name] = {
+                type: argument.type,
+                description: argument.description
+              }
 
-            try {
-              const { data } = await this.serviceTools.runTools(toolBody, requestConfig)
-              return data?.content
-            } catch (error) {
-              console.error(`Error during tool '${tool.name}' execution:`, error)
-              return null
-            }
-          }
+              return args
+            }, {} as Record<string, { type: "string" | "number" | "boolean" | "object" | "integer" | "array", description: string }>)
+          })
         }
 
         return tools
@@ -127,11 +108,11 @@ export default class Toolhouse {
             const toolBody: RunToolsRequest = {
               provider: this.provider,
               metadata: this.metadata,
-              content,
+              content, // cambia content type: {input: obj, name: string}
             };
 
             const { data } = await this.serviceTools.runTools(toolBody, requestConfig);
-            return data?.content;
+            return data?.content; // hai solo {provider: provTyp, content: content}
           } catch (error) {
             return undefined;
           }

@@ -1,21 +1,42 @@
 import { z } from 'zod';
 import { inputSchema, inputSchemaRequest, inputSchemaResponse } from './input-schema';
-import { argument } from './argument';
+import { argumentType } from './argument-type';
 
 /**
  * The shape of the model inside the application code - what the users use
  */
-export const toolhouseApiModelsBaseProvider = z.lazy(() => {
+export const toolhouseApiModelsGenericProvider = z.lazy(() => { // cambia in generic
   return z.object({
     name: z.string(),
     title: z.string(),
     description: z.string(),
-    arguments: z.array(argument),
+    arguments: z.array(genericArgument),
   });
 });
 
-export type ToolhouseApiModelsBaseProvider = z.infer<
-  typeof toolhouseApiModelsBaseProvider
+/**
+ * The shape of the model inside the application code - what the users use
+ */
+export const genericArgument = z.lazy(() =>
+  z.object({
+    name: z.string(),
+    type: argumentType,
+    description: z.string(),
+    required: z.boolean(),
+  }));
+
+/**
+ * Tool Arguments
+ * @typedef  {GenericArgument} genericArgument - Tool Arguments - Tool Arguments
+ * @property {string}
+ * @property {ArgumentType}
+ * @property {string}
+ * @property {boolean}
+ */
+export type GenericArgument = z.infer<typeof genericArgument>;
+
+export type ToolhouseApiModelsGenericProvider = z.infer<
+  typeof toolhouseApiModelsGenericProvider
 >;
 
 /**

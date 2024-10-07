@@ -3,7 +3,7 @@ import {
   toolhouseApiModelsProvidersProvidersToolsOpenaiTool,
 } from './toolhouse-api-models-providers-providers-tools-openai-tool';
 import {
-  toolhouseApiModelsBaseProvider,
+  toolhouseApiModelsGenericProvider,
   toolhouseApiModelsProvidersProvidersToolsAnthropicTool,
 } from './toolhouse-api-models-providers-providers-tools-anthropic-tool';
 
@@ -14,7 +14,7 @@ export const getToolsRequestGetToolsPostOkResponse = z.lazy(() => {
   return z.union([
     z.array(toolhouseApiModelsProvidersProvidersToolsOpenaiTool),
     z.array(toolhouseApiModelsProvidersProvidersToolsAnthropicTool),
-    z.array(toolhouseApiModelsBaseProvider),
+    z.array(toolhouseApiModelsGenericProvider),
   ]);
 });
 
@@ -35,7 +35,7 @@ export const getToolsRequestGetToolsPostOkResponseResponse = z.lazy(() => {
   return z.union([
     z.array(toolhouseApiModelsProvidersProvidersToolsOpenaiTool),
     z.array(toolhouseApiModelsProvidersProvidersToolsAnthropicTool),
-    z.array(toolhouseApiModelsBaseProvider),
+    z.array(toolhouseApiModelsGenericProvider),
   ]);
 });
 
@@ -47,6 +47,6 @@ export const getToolsRequestGetToolsPostOkResponseRequest = z.lazy(() => {
   return z.union([
     z.array(toolhouseApiModelsProvidersProvidersToolsOpenaiTool),
     z.array(toolhouseApiModelsProvidersProvidersToolsAnthropicTool),
-    z.array(toolhouseApiModelsBaseProvider),
+    z.array(toolhouseApiModelsGenericProvider),
   ]);
 });
