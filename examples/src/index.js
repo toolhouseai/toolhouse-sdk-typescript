@@ -5,7 +5,7 @@ dotenv.config();
 
 (async () => {
   const toolhouse = new Toolhouse({
-    baseUrl: 'https://g6dywws9a0.execute-api.us-west-2.amazonaws.com/v1',
+    baseUrl: 'https://api.testing.toolhouse.ai/v1',
     apiKey: process.env['TOOLHOUSE_API_KEY']
   })
 

@@ -6,6 +6,7 @@ dotenv.config();
 
 async function main() {
   const toolhouse = new Toolhouse({
+    baseUrl: 'https://api.testing.toolhouse.ai/v1',
     apiKey: process.env['TOOLHOUSE_API_KEY']
   })
   const client = new OpenAI({

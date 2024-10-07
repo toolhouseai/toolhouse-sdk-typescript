@@ -4,7 +4,7 @@ export const runToolsRequestProvider = z.union([
   z.literal('openai'),
   z.literal('anthropic'),
   z.literal('openai_assistants'),
-  z.literal('vercel_ai'),
+  z.literal('vercel'),
 ]);
 
 export type RunToolsRequestProvider = z.infer<typeof runToolsRequestProvider>;

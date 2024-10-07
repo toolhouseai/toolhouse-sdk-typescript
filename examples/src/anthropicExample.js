@@ -6,6 +6,7 @@ dotenv.config();
 
 async function main() {
   const client = new Anthropic({
+    baseUrl: 'https://api.testing.toolhouse.ai/v1',
     apiKey: process.env['ANTHROPIC_API_KEY'],
   })
   const toolhouse = new Toolhouse({
