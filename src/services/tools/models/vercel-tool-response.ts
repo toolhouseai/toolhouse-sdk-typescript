@@ -1,5 +1,4 @@
 import { z } from 'zod';
-import { anthropicToolResponseType } from './anthropic-tool-response-type';
 
 /**
  * The shape of the model inside the application code - what the users use
@@ -25,11 +24,9 @@ export const vercelToolResponseResponse = z.lazy(() => {
   return z
     .object({
       content: z.string(),
-      type: anthropicToolResponseType,
     })
     .transform((data) => ({
       content: data['content'],
-      type: data['type']
     }));
 });
 
@@ -41,10 +38,8 @@ export const vercelToolResponseRequest = z.lazy(() => {
   return z
     .object({
       content: z.string().nullish(),
-      type: anthropicToolResponseType.nullish(),
     })
     .transform((data) => ({
       content: data['content'],
-      type: data['type'],
     }));
 });
