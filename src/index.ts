@@ -72,7 +72,6 @@ export default class Toolhouse {
             }, {} as Record<string, { type: "string" | "number" | "boolean" | "object" | "integer" | "array", description: string }>)
           }),
           execute: async (params) => {
-            // return `433 is a prime number.`
             const toolBody: RunToolsRequest = {
               provider: this.provider,
               metadata: this.metadata,
@@ -81,15 +80,9 @@ export default class Toolhouse {
                 input: params
               }
             }
-            console.log('params', JSON.stringify(params))
-            console.log('tool', JSON.stringify(tool.arguments))
-            console.log('toolBody', JSON.stringify(toolBody))
             try {
-              console.log('vado in execute')
               const { data } = await this.serviceTools.runTools(toolBody, requestConfig)
-              console.log('fine execute')
-              console.log(data?.content)
-              return data?.content
+              return data?.content.content
             } catch (error) {
               console.error(`Error during tool '${tool.name}' execution:`, error)
               return null
