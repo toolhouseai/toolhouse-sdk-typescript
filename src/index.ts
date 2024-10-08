@@ -70,7 +70,31 @@ export default class Toolhouse {
 
               return args
             }, {} as Record<string, { type: "string" | "number" | "boolean" | "object" | "integer" | "array", description: string }>)
-          })
+          }),
+          execute: async (params) => {
+            // return `433 is a prime number.`
+            const toolBody: RunToolsRequest = {
+              provider: this.provider,
+              metadata: this.metadata,
+              content: {
+                name: tool.name,
+                input: params
+              }
+            }
+            console.log('params', JSON.stringify(params))
+            console.log('tool', JSON.stringify(tool.arguments))
+            console.log('toolBody', JSON.stringify(toolBody))
+            try {
+              console.log('vado in execute')
+              const { data } = await this.serviceTools.runTools(toolBody, requestConfig)
+              console.log('fine execute')
+              console.log(data?.content)
+              return data?.content
+            } catch (error) {
+              console.error(`Error during tool '${tool.name}' execution:`, error)
+              return null
+            }
+          }
         }
 
         return tools
@@ -108,11 +132,11 @@ export default class Toolhouse {
             const toolBody: RunToolsRequest = {
               provider: this.provider,
               metadata: this.metadata,
-              content, // cambia content type: {input: obj, name: string}
+              content,
             };
 
             const { data } = await this.serviceTools.runTools(toolBody, requestConfig);
-            return data?.content; // hai solo {provider: provTyp, content: content}
+            return data?.content;
           } catch (error) {
             return undefined;
           }
