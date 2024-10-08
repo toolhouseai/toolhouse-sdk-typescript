@@ -13,7 +13,7 @@ async function main() {
     provider: 'anthropic',
     apiKey: process.env['TOOLHOUSE_API_KEY']
   })
-  const messages: Anthropic.Messages.MessageParam[] = [{ role: 'user', content: 'Search information about Etiqa s.r.l' }]
+  const messages: Anthropic.Messages.MessageParam[] = [{ role: 'user', content: 'Is 433 a prime number?' }]
 
   const tools = await toolhouse.getTools() as Anthropic.Messages.Tool[]
   const message = await client.messages.create({
@@ -22,7 +22,6 @@ async function main() {
     model: 'claude-3-opus-20240229',
     tools
   })
-
   const anthropicMessage = await toolhouse.runTools(message) as Anthropic.Messages.MessageParam[]
 
   const newMessages = [...messages, ...anthropicMessage]
