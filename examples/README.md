@@ -2,7 +2,7 @@
 
 A basic example of how to use the @toolhouseai/sdk package.
 
-Anthropic and OpenAi version.
+Anthropic, OpenAi, Vercel version.
 
 use the .env.example to create your .env file
 ```
