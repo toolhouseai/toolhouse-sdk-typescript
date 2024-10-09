@@ -1,7 +1,7 @@
 {
   "name": "@toolhouseai/sdk",
   "version": "1.0.0",
-  "description": "Toolhouse API",
+  "description": "Toolhouse typescript sdk",
   "source": "./src/index.ts",
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
