@@ -1,11 +1,6 @@
-# Toolhouse TypeScript SDK 1.0.0
+# Toolhouse TypeScript SDK
 
 Welcome to the Toolhouse SDK documentation. This guide will help you get started with integrating and using the Toolhouse SDK in your project.
-
-## Versions
-
-- API version: `1.0.0`
-- SDK version: `1.0.0`
 
 ## About the API
 
