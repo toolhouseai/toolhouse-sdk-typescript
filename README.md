@@ -62,7 +62,7 @@ You can check the working examples in this [folder](/examples).
 
 ## Other configuration options
 
-- provider: Specifies the provider, such as 'openai' or 'anthropic'. Defaults to 'openai'.
+- provider: Specifies the provider, such as 'openai', 'anthropic' or 'vercel'. Defaults to 'openai'.
 - baseUrl: Optionally specify the base URL for API requests.
 - timeoutMs: The timeout for API requests, in milliseconds.
 
