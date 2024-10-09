@@ -1,6 +1,6 @@
-# @toolhouseai/toolhouse-sdk-typescript
+# @toolhouseai/sdk
 
-A basic example of how to use the @toolhouseai/toolhouse-sdk-typescript package.
+A basic example of how to use the @toolhouseai/sdk package.
 
 Anthropic and OpenAi version.
 

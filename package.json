@@ -1,5 +1,5 @@
 {
-  "name": "@toolhouseai/toolhouse-sdk-typescript",
+  "name": "@toolhouseai/sdk",
   "version": "1.0.0",
   "description": "Toolhouse API",
   "source": "./src/index.ts",
