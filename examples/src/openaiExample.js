@@ -1,5 +1,5 @@
 import OpenAI from 'openai';
-import Toolhouse from '@toolhouseai/toolhouse-sdk-typescript';
+import Toolhouse from '@toolhouseai/sdk';
 import * as dotenv from 'dotenv';
 
 dotenv.config();

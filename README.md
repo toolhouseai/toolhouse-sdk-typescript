@@ -34,12 +34,12 @@ This SDK is compatible with the following versions: `TypeScript >= 4.8.4`
 To get started with the SDK, we recommend installing using `npm`:
 
 ```bash
-npm install @toolhouseai/toolhouse-sdk-typescript
+npm install @toolhouseai/sdk
 ```
 
 or `yarn`
 ```bash
-yarn add @toolhouseai/toolhouse-sdk-typescript
+yarn add @toolhouseai/sdk
 ```
 
 ## Authentication
@@ -81,7 +81,7 @@ const toolhouse = new Toolhouse({apiKey: process.env['TOOLHOUSE_API_KEY'], timeo
 Below is a comprehensive example demonstrating how to authenticate and call a simple endpoint:
 
 ```ts
-import Toolhouse from '@toolhouseai/toolhouse-sdk-typescript';
+import Toolhouse from '@toolhouseai/sdk';
 import * as dotenv from 'dotenv';
 
 dotenv.config();
