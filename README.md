@@ -109,7 +109,7 @@ Returns: A list of PublicTool[] or undefined if no tools are available.
 
 #### getTools
 >getTools(bundle?: string, requestConfig?: RequestConfig): Promise<OpenAI.ChatCompletionTool[] | Anthropic.Messages.Tool[]>
-This method fetches tools from a specific provider, either OpenAI or Anthropic.
+This method fetches tools from a specific provider, either OpenAI, Anthropic or Vercel.
 
 ```ts
 const tools = await toolhouse.getTools();
@@ -124,7 +124,7 @@ Returns: A list of tools specific to the chosen provider.
 #### runTools
 > runTools(body: OpenAI.ChatCompletion | Anthropic.Messages.Message, append?: boolean, requestConfig?: RequestConfig): Promise<(OpenAiToolResponse | OpenAI.ChatCompletionMessageParam)[] | Anthropic.Messages.MessageParam[]>
 
-This method runs tools based on the provider and provided content, using either OpenAI or Anthropic.
+This method runs tools based on the provider and provided content, using OpenAI, Anthropic or Vercel
 
 ```ts
 const tools = await toolhouse.getTools()
@@ -137,7 +137,7 @@ const tools = await toolhouse.getTools()
   const openAiMessage = await toolhouse.runTools(chatCompletion)
   console.log(openAiMessage)
 ```
-body: The content required to execute tools, provided in the format specific to OpenAI or Anthropic.
+body: The content required to execute tools, provided in the format specific to OpenAI, Anthropic or Vercel
 append: Optional. If true, the response is appended to the original message.
 requestConfig: Optional. Provides configuration like headers and query parameters.
 Returns: A list of responses from the tools, depending on the provider.
