@@ -150,6 +150,13 @@ Retrieve or set the metadata used in tool requests.
 console.log(toolhouse.metadata);
 toolhouse.metadata = { newKey: 'newValue' };
 ```
+or
+```ts
+  const toolhouse = new Toolhouse({
+    apiKey: process.env['TOOLHOUSE_API_KEY'],
+    metadata: { newKey: 'newValue' }
+  })
+```
 #### provider
 Retrieve or set the provider for tool requests.
 
@@ -157,13 +164,19 @@ Retrieve or set the provider for tool requests.
 console.log(toolhouse.provider);
 toolhouse.provider = 'anthropic';
 ```
-
+or
+```ts
+  const toolhouse = new Toolhouse({
+    apiKey: process.env['TOOLHOUSE_API_KEY'],
+    provider: 'anthropic'
+  })
+```
 #### Error Handling
 ```ts
 try {
   const tools = await toolhouse.tools();
 } catch (error) {
-  console.error(error.message);
+  console.error(error);
 }
 ```
 
