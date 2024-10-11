@@ -1,5 +1,5 @@
 import Anthropic from '@anthropic-ai/sdk';
-import Toolhouse from '@toolhouseai/sdk';
+import {Toolhouse} from '@toolhouseai/sdk';
 import * as dotenv from 'dotenv';
 
 dotenv.config();
@@ -12,7 +12,7 @@ async function main() {
     provider: 'anthropic',
     apiKey: process.env['TOOLHOUSE_API_KEY']
   })
-  const messages= [{ role: 'user', content: 'Search information about Etiqa s.r.l' }]
+  const messages = [{ role: 'user', content: 'Search information about Etiqa s.r.l' }]
 
   const tools = await toolhouse.getTools()
   const message = await client.messages.create({
@@ -21,7 +21,6 @@ async function main() {
     model: 'claude-3-opus-20240229',
     tools
   })
-
   const anthropicMessage = await toolhouse.runTools(message)
 
   const newMessages = [...messages, ...anthropicMessage]

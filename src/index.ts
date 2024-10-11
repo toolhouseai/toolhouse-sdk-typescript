@@ -6,10 +6,9 @@ import { ToolhouseApiModelsGenericProvider } from './services/tools/models/toolh
 import OpenAI from 'openai';
 import Anthropic from '@anthropic-ai/sdk';
 
-export * from './services/tools';
 export type * from './http';
 
-export default class Toolhouse {
+export class Toolhouse {
   private _provider: ProviderTypes;
   private _metadata: MetadataType;
   private _serviceTools: ToolsService;
@@ -21,7 +20,7 @@ export default class Toolhouse {
       baseUrl,
     };
     if (config.apiKey == null)
-      throw new Error('Invalid configuration, check your Enviromnent variables')
+      throw new Error('The api_key client option must be set either by passing api_key to the SDK or by setting the TOOLHOUSE_API_KEY environment variable')
     this.apiKey = config.apiKey
     this._provider = config.provider ?? 'openai'
     this._metadata = config.metadata ?? {}

@@ -1,4 +1,4 @@
-import Toolhouse from '@toolhouseai/sdk';
+import { Toolhouse } from '@toolhouseai/sdk';
 import { anthropic } from '@ai-sdk/anthropic';
 import { CoreMessage, CoreTool, generateText } from 'ai';
 import * as dotenv from 'dotenv';
