@@ -76,7 +76,7 @@ const toolhouse = new Toolhouse({apiKey: process.env['TOOLHOUSE_API_KEY'], timeo
 Below is a comprehensive example demonstrating how to authenticate and call a simple endpoint:
 
 ```ts
-import Toolhouse from '@toolhouseai/sdk';
+import { Toolhouse } from '@toolhouseai/sdk';
 import * as dotenv from 'dotenv';
 
 dotenv.config();

@@ -1,6 +1,6 @@
-import Toolhouse from '@toolhouseai/sdk';
+import {Toolhouse} from '@toolhouseai/sdk';
 import * as dotenv from 'dotenv';
-
+ 
 dotenv.config();
 
 (async () => {
@@ -9,8 +9,8 @@ dotenv.config();
   })
 
   const tools = await toolhouse.tools();
-  console.log(JSON.stringify(tools))
+  console.log(tools);
 
   const getTools = await toolhouse.getTools();
-  console.log(JSON.stringify(getTools))
+  console.log(getTools);
 })();

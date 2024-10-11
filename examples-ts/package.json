@@ -1,0 +1,27 @@
+{
+  "name": "toolhouse",
+  "version": "1.0.0",
+  "private": true,
+  "dependencies": {
+    "@ai-sdk/anthropic": "^0.0.51",
+    "@ai-sdk/openai": "^0.0.63",
+    "@anthropic-ai/sdk": "^0.27.3",
+    "@toolhouseai/sdk": "file:../",
+    "ai": "^3.4.8",
+    "dotenv": "^16.4.5",
+    "openai": "^4.65.0",
+    "zod": "^3.23.8"
+  },
+  "scripts": {
+    "setup": "npm --prefix ../ install && npm --prefix ../ run build && npm install",
+    "dev": "ts-node src/index.ts",
+    "openai": "ts-node src/openaiExample.ts",
+    "anthropic": "ts-node src/anthropicExample.ts",
+    "next": "ts-node src/nextJsExample.ts"
+  },
+  "devDependencies": {
+    "@types/node": "^22.7.3",
+    "ts-node": "^10.9.1",
+    "typescript": "5.3.3"
+  }
+}
