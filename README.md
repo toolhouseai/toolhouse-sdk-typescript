@@ -43,7 +43,7 @@ yarn add @toolhouseai/sdk
 
 The Toolhouse API uses an Access Token for authentication. This token must be provided to authenticate your requests to the API.
 
-To obtain an API Key, register at [Toolhouse](https://app.toolhouse.ai/).
+To obtain an API Key, register at [Toolhouse](https://toolhouse.ai/).
 
 ### Setting the Access Token
 
