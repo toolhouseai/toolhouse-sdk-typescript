@@ -2,78 +2,86 @@
 
 Welcome to the Toolhouse SDK documentation. This guide will help you get started with integrating and using the Toolhouse SDK in your project.
 
-## About the API
-
-Toolhouse API
-
 ## Table of Contents
 
+- [About the API](#about-the-api)
 - [Setup & Configuration](#setup--configuration)
   - [Supported Language Versions](#supported-language-versions)
   - [Installation](#installation)
 - [Authentication](#authentication)
-  - [Access Token Authentication](#access-token-authentication)
-- [Setting Options](#Other-configuration-options)
-- [Sample Usage](#sample-usage)
+- [Configuration Options](#configuration-options)
+- [Usage](#usage)
 - [Services](#services)
+- [Error Handling](#error-handling)
 - [License](#license)
 
-# Setup & Configuration
+## About the API
 
-## Supported Language Versions
+The Toolhouse API provides access to various AI-powered tools and services.
 
-This SDK is compatible with the following versions: `TypeScript >= 4.8.4`
+## Setup & Configuration
 
-## Installation
+### Supported Language Versions
 
-To get started with the SDK, we recommend installing using `npm`:
+This SDK is compatible with TypeScript >= 4.8.4.
+
+### Installation
+
+To get started with the SDK, we recommend installing it using `npm` or `yarn`:
 
 ```bash
 npm install @toolhouseai/sdk
 ```
 
-or `yarn`
+or
+
 ```bash
 yarn add @toolhouseai/sdk
 ```
 
 ## Authentication
 
-### Access Token Authentication
+The Toolhouse API uses an Access Token for authentication. This token must be provided to authenticate your requests to the API.
 
-The Toolhouse API uses an Access Token for authentication.
+To obtain an API Key, register at [Toolhouse](https://app.toolhouse.ai/).
 
-This token must be provided to authenticate your requests to the API.
+### Setting the Access Token
 
-You need to register at [toolhouse](https://app.toolhouse.ai/) and obtain an API Key
-
-#### Setting the Access Token
-
-When you initialize the SDK, you can set the access token as follows:
+When initializing the SDK, set the access token as follows:
 
 ```ts
 const toolhouse = new Toolhouse({
-    apiKey: process.env['TOOLHOUSE_API_KEY']
-  })
+  apiKey: process.env['TOOLHOUSE_API_KEY']
+});
 ```
-apiKey is the only mandatory param, represent the API key required to authenticate with the tool provider.
 
-You can check the working examples in this [folder](/examples).
+The `apiKey` is the only mandatory parameter and represents the API key required to authenticate with the tool provider.
 
-## Other configuration options
+You can find working examples in the [examples folder for JavaScript](/examples-js) and [examples folder for Typescript](/examples-ts).
 
-- provider: Specifies the provider, such as 'openai', 'anthropic' or 'vercel'. Defaults to 'openai'.
-- baseUrl: Optionally specify the base URL for API requests.
-- timeoutMs: The timeout for API requests, in milliseconds.
+## Configuration Options
 
-example:
+In addition to the `apiKey`, you can configure the following options:
+
+- `provider`: Specifies the provider, such as 'openai', 'anthropic', or 'vercel'. Defaults to 'openai'.
+- `baseUrl`: Optionally specify the base URL for API requests.
+- `timeoutMs`: The timeout for API requests, in milliseconds.
+- `metadata`: Additional metadata to include with requests.
+
+Example:
+
 ```ts
-const toolhouse = new Toolhouse({apiKey: process.env['TOOLHOUSE_API_KEY'], timeoutMs: 10000 });
+const toolhouse = new Toolhouse({
+  apiKey: process.env['TOOLHOUSE_API_KEY'],
+  provider: 'anthropic',
+  timeoutMs: 10000,
+  metadata: { customField: 'value' }
+});
 ```
 
-# Sample Usage
+## Usage
 
-Below is a comprehensive example demonstrating how to authenticate and call a simple endpoint:
+Here's a basic example demonstrating how to authenticate and retrieve available tools:
 
 ```ts
 import { Toolhouse } from '@toolhouseai/sdk';
@@ -84,94 +92,77 @@ dotenv.config();
 async function main() {
   const toolhouse = new Toolhouse({
     apiKey: process.env['TOOLHOUSE_API_KEY']
-  })
+  });
 
   const tools = await toolhouse.tools();
   console.log(tools);
 }
-main()
+
+main();
 ```
 
 ## Services
+
 ### Methods
 
-#### tools
->tools(requestConfig?: RequestConfig): Promise<PublicTool[] | undefined>
-This method retrieves a list of public tools available from Toolhouse.
+#### tools()
+
+Retrieves a list of public tools available from Toolhouse.
 
 ```ts
 const tools = await toolhouse.tools();
 console.log(tools);
 ```
 
-requestConfig: Optional. Provides configuration like headers and query parameters.
-Returns: A list of PublicTool[] or undefined if no tools are available.
+#### getTools()
 
-#### getTools
->getTools(bundle?: string, requestConfig?: RequestConfig): Promise<OpenAI.ChatCompletionTool[] | Anthropic.Messages.Tool[]>
-This method fetches tools from a specific provider, either OpenAI, Anthropic or Vercel.
+Fetches tools from a specific provider (OpenAI, Anthropic, or Vercel).
+
+```ts
+const tools = await toolhouse.getTools('default');
+console.log(tools);
+```
+
+#### runTools()
+
+Executes tools based on the provider and provided content.
 
 ```ts
 const tools = await toolhouse.getTools();
-console.log(tools);
+const chatCompletion = await client.chat.completions.create({
+  messages,
+  model: 'gpt-3.5-turbo',
+  tools
+});
+
+const openAiMessage = await toolhouse.runTools(chatCompletion);
+console.log(openAiMessage);
 ```
-<detail>
-bundle: Optional. Specify the bundle of tools (defaults to 'default').
-requestConfig: Optional. Provides configuration like headers and query parameters.
-Returns: A list of tools specific to the chosen provider.
-</detail>
-
-#### runTools
-> runTools(body: OpenAI.ChatCompletion | Anthropic.Messages.Message, append?: boolean, requestConfig?: RequestConfig): Promise<(OpenAiToolResponse | OpenAI.ChatCompletionMessageParam)[] | Anthropic.Messages.MessageParam[]>
-
-This method runs tools based on the provider and provided content, using OpenAI, Anthropic or Vercel
-
-```ts
-const tools = await toolhouse.getTools()
-  const chatCompletion = await client.chat.completions.create({
-    messages,
-    model: 'gpt-3.5-turbo',
-    tools
-  })
-
-  const openAiMessage = await toolhouse.runTools(chatCompletion)
-  console.log(openAiMessage)
-```
-body: The content required to execute tools, provided in the format specific to OpenAI, Anthropic or Vercel
-append: Optional. If true, the response is appended to the original message.
-requestConfig: Optional. Provides configuration like headers and query parameters.
-Returns: A list of responses from the tools, depending on the provider.
 
 ### Accessor Methods
+
 #### metadata
+
 Retrieve or set the metadata used in tool requests.
 
 ```ts
 console.log(toolhouse.metadata);
 toolhouse.metadata = { newKey: 'newValue' };
 ```
-or
-```ts
-  const toolhouse = new Toolhouse({
-    apiKey: process.env['TOOLHOUSE_API_KEY'],
-    metadata: { newKey: 'newValue' }
-  })
-```
+
 #### provider
+
 Retrieve or set the provider for tool requests.
 
 ```ts
 console.log(toolhouse.provider);
 toolhouse.provider = 'anthropic';
 ```
-or
-```ts
-  const toolhouse = new Toolhouse({
-    apiKey: process.env['TOOLHOUSE_API_KEY'],
-    provider: 'anthropic'
-  })
-```
-#### Error Handling
+
+## Error Handling
+
+Wrap API calls in try-catch blocks to handle potential errors:
+
 ```ts
 try {
   const tools = await toolhouse.tools();
@@ -182,6 +173,4 @@ try {
 
 ## License
 
-This SDK is licensed under the Apache-2.0 License.
-
-See the [LICENSE](LICENSE) file for more details.
+This SDK is licensed under the Apache-2.0 License. See the [LICENSE](LICENSE) file for more details.
