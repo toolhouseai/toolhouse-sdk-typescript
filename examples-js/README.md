@@ -35,4 +35,4 @@ You can find the example code for each AI provider in the following files:
 
 - [Anthropic Example](./src/anthropicExample.js)
 - [OpenAI Example](./src/openaiExample.js)
-- [Vercel AI Example](./src/nextJsExample.js)
+- [Vercel AI Example](./src/vercelExample.js)
