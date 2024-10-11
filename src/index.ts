@@ -156,27 +156,23 @@ export class Toolhouse {
         }
 
         const toolCallsPromises = tool_calls.map(async (toolCall) => {
-          try {
-            if (toolCall.type === 'tool_use') {
-              const content: RunToolsRequestContent = { ...toolCall };
-              const toolBody: RunToolsRequest = {
-                provider: this.provider,
-                metadata: this.metadata,
-                content,
-              };
+          if (toolCall.type === 'tool_use') {
+            const content: RunToolsRequestContent = { ...toolCall };
+            const toolBody: RunToolsRequest = {
+              provider: this.provider,
+              metadata: this.metadata,
+              content,
+            };
 
-              const { data } = await this.serviceTools.runTools(toolBody, requestConfig)
+            const { data } = await this.serviceTools.runTools(toolBody, requestConfig)
 
-              return data?.content
-            } else if (toolCall.type === 'text') {
-              return undefined;
-            } else {
-              return undefined;
-            }
-          } catch (error) {
+            return data?.content
+          } else if (toolCall.type === 'text') {
+            return undefined;
+          } else {
             return undefined;
           }
-        });
+        })
 
         const results = (await Promise.all(toolCallsPromises))
           .filter((result) => result !== undefined) as Anthropic.Messages.ToolResultBlockParam[];
