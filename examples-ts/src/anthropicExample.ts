@@ -10,8 +10,7 @@ async function main() {
   })
   const toolhouse = new Toolhouse({
     provider: 'anthropic',
-    apiKey: process.env['TOOLHOUSE_API_KEY'],
-    metadata: { timezone: 'UTC' }
+    apiKey: process.env['TOOLHOUSE_API_KEY']
   })
   const messages: Anthropic.Messages.MessageParam[] = [{ role: 'user', content: 'Search information about Etiqa s.r.l' }]
 
