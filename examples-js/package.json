@@ -18,6 +18,6 @@
     "dev": "node src/index.js",
     "openai": "node src/openaiExample.js",
     "anthropic": "node src/anthropicExample.js",
-    "next": "node src/nextJsExample.js"
+    "vercel": "node src/vercelExample.js"
   }
 }
