@@ -163,9 +163,7 @@ export class Toolhouse {
               metadata: this.metadata,
               content,
             };
-
             const { data } = await this.serviceTools.runTools(toolBody, requestConfig)
-
             return data?.content
           } else if (toolCall.type === 'text') {
             return undefined;

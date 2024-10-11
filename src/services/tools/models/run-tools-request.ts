@@ -1,5 +1,4 @@
 import { z } from 'zod';
-import { metadata, metadataRequest, metadataResponse } from './metadata';
 import { runToolsRequestProvider } from './run-tools-request-provider';
 import {
   runToolsRequestContent,
@@ -12,7 +11,7 @@ import {
  */
 export const runToolsRequest = z.lazy(() => {
   return z.object({
-    metadata: metadata,
+    metadata: z.any().optional().nullable(),
     provider: runToolsRequestProvider,
     content: runToolsRequestContent,
     bundle: z.string().optional().nullable(),
@@ -36,7 +35,7 @@ export type RunToolsRequest = z.infer<typeof runToolsRequest>;
 export const runToolsRequestResponse = z.lazy(() => {
   return z
     .object({
-      metadata: metadataResponse,
+      metadata: z.any().optional().nullable(),
       provider: runToolsRequestProvider,
       content: runToolsRequestContentResponse,
       bundle: z.string().optional().nullable(),
@@ -56,7 +55,7 @@ export const runToolsRequestResponse = z.lazy(() => {
 export const runToolsRequestRequest = z.lazy(() => {
   return z
     .object({
-      metadata: metadataRequest.nullish(),
+      metadata: z.any().nullish(),
       provider: runToolsRequestProvider.nullish(),
       content: runToolsRequestContentRequest.nullish(),
       bundle: z.string().nullish(),
