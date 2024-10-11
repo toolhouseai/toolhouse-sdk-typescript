@@ -18,7 +18,6 @@ export type { Property } from './property';
 export type { PropertyType } from './property-type';
 export type { InputSchema } from './input-schema';
 export type { InputSchemaType } from './input-schema-type';
-export type { Metadata } from './metadata';
 export type { RunToolsRequestProvider } from './run-tools-request-provider';
 export type { RunToolsRequestContent } from './run-tools-request-content';
 export type { AntropicToolRequest } from './antropic-tool-request';

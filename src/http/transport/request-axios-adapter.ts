@@ -41,14 +41,20 @@ export class RequestAxiosAdapter<T> implements HttpAdapter {
       headerRecord[key] = axiosResponse.headers[key];
     });
 
+
     const metadata: HttpMetadata = {
       status: axiosResponse.status,
       statusText: axiosResponse.statusText || '',
-      headers: headerRecord,
+      headers: headerRecord
     };
 
     if (metadata.status >= 400) {
-      throw new HttpError(metadata);
+      const raw = axiosResponse.data.buffer.slice(
+        axiosResponse.data.byteOffset,
+        axiosResponse.data.byteOffset + axiosResponse.data.byteLength,
+      )
+      const decodedBody = new TextDecoder().decode(raw)
+      throw new HttpError(metadata, decodedBody);
     }
 
     return {
