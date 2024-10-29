@@ -4,7 +4,7 @@
   "config": {
     "apiId": 1214,
     "sdkName": "toolhouse",
-    "sdkVersion": "1.0.2",
+    "sdkVersion": "1.0.3",
     "liblabVersion": "2",
     "deliveryMethods": [
       "zip"
@@ -28,7 +28,7 @@
         "githubRepoName": "@toolhouseai/toolhouse-sdk-typescript",
         "ignoreFiles": [],
         "liblabVersion": "2",
-        "sdkVersion": "1.0.2",
+        "sdkVersion": "1.0.3",
         "generateEnumAs": "union"
       }
     },
