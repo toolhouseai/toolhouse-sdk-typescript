@@ -1,6 +1,6 @@
 {
   "name": "@toolhouseai/sdk",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Toolhouse typescript sdk",
   "source": "./src/index.ts",
   "main": "./dist/index.js",
@@ -11,8 +11,8 @@
   "scripts": {
     "test": "tsc --noEmit",
     "build": "npm run build:node && npm run build:browser",
-    "build:node": "tsup src/index.ts --format cjs,esm --dts --clean --target node16 --outDir dist",
-    "build:browser": "tsup src/index.ts --format esm --dts --clean --target es2020 --outDir dist && mv dist/index.mjs dist/index.browser.js",
+    "build:node": "tsup src/index.ts --format cjs,esm --dts --target node16 --outDir dist",
+    "build:browser": "tsup src/index.ts --format esm --dts --target es2020 --outDir dist && cp dist/index.mjs dist/index.browser.js",
     "prepublishOnly": "npm run build"
   },
   "keywords": [
