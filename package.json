@@ -12,7 +12,7 @@
     "test": "tsc --noEmit",
     "build": "npm run build:node && npm run build:browser",
     "build:node": "tsup src/index.ts --format cjs,esm --dts --clean --target node16 --outDir dist",
-    "build:browser": "tsup src/index.ts --format esm --dts --clean --target es2020 --outDir dist && mv dist/index.js dist/index.browser.js",
+    "build:browser": "tsup src/index.ts --format esm --dts --clean --target es2020 --outDir dist && mv dist/index.mjs dist/index.browser.js",
     "prepublishOnly": "npm run build"
   },
   "keywords": [
