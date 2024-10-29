@@ -3,13 +3,11 @@ import { MetadataType, ProviderTypes, RequestConfig, SdkConfig } from './http/ty
 import { GetToolsRequest, OpenAiToolResponse, PublicTool, RunToolsRequest, RunToolsRequestContent, ToolsService } from './services/tools';
 import { CoreTool, jsonSchema } from 'ai';
 import { ToolhouseApiModelsGenericProvider } from './services/tools/models/toolhouse-api-models-providers-providers-tools-anthropic-tool';
+import { readEnv } from './utils';
 import OpenAI from 'openai';
 import Anthropic from '@anthropic-ai/sdk';
-import * as dotenv from 'dotenv';
 
 export type * from './http';
-
-dotenv.config();
 
 export class Toolhouse {
   private _provider: ProviderTypes;
@@ -24,7 +22,7 @@ export class Toolhouse {
     }
     let key = config.apiKey
     if (key == null) {
-      const defaultKey = process.env['TOOLHOUSE_API_KEY']
+      const defaultKey = readEnv('TOOLHOUSE_API_KEY')
       if (defaultKey == null)
         throw new Error('The api_key client option must be set either by passing api_key to the SDK or by setting the TOOLHOUSE_API_KEY environment variable')
       key = defaultKey
