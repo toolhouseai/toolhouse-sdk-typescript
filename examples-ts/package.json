@@ -1,6 +1,6 @@
 {
   "name": "toolhouse",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "private": true,
   "dependencies": {
     "@ai-sdk/anthropic": "^0.0.51",
