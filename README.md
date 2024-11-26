@@ -1,29 +1,48 @@
 # Toolhouse TypeScript SDK
 
-Welcome to the Toolhouse SDK documentation. This guide will help you get started with integrating and using the Toolhouse SDK in your project.
+Welcome to the Toolhouse TypeScript SDK documentation. This guide will help you get started with integrating and using the SDK in your project.
+
+You can find example code for the following providers below:
+
+- Anthropic Example
+  - [JavaScript]((examples-js/src/anthropicExample.js)) | [TypeScript](examples-ts/src/anthropicExample.ts)
+- OpenAI Example
+  - [JavaScript](examples-js/src/openaiExample.js) | [TypeScript](examples-ts/src/openaiExample.ts)
+- Vercel AI Example
+  - [JavaScript](examples-js/src/vercelExample.js) | [TypeScript](examples-ts/src/vercelExample.ts)
 
 ## Table of Contents
 
-- [About the API](#about-the-api)
-- [Setup & Configuration](#setup--configuration)
-  - [Supported Language Versions](#supported-language-versions)
-  - [Installation](#installation)
-- [Authentication](#authentication)
-- [Configuration Options](#configuration-options)
-- [Usage](#usage)
-- [Services](#services)
-- [Error Handling](#error-handling)
-- [License](#license)
+- [Toolhouse TypeScript SDK](#toolhouse-typescript-sdk)
+  - [Table of Contents](#table-of-contents)
+  - [About the API](#about-the-api)
+  - [Setup \& Configuration](#setup--configuration)
+    - [Supported Language Versions](#supported-language-versions)
+    - [Installation](#installation)
+  - [Authentication](#authentication)
+    - [Setting the Access Token](#setting-the-access-token)
+  - [Configuration Options](#configuration-options)
+  - [Usage](#usage)
+  - [Services](#services)
+    - [Methods](#methods)
+      - [tools()](#tools)
+      - [getTools()](#gettools)
+      - [runTools()](#runtools)
+    - [Accessor Methods](#accessor-methods)
+      - [metadata](#metadata)
+      - [provider](#provider)
+  - [Error Handling](#error-handling)
+  - [License](#license)
 
 ## About the API
 
-The Toolhouse API provides access to various AI-powered tools and services.
+The Toolhouse API provides access to various AI-powered tools and services, that you can install from the [Tool Store](https://app.toolhouse.ai/store).
 
 ## Setup & Configuration
 
 ### Supported Language Versions
 
-This SDK is compatible with TypeScript >= 4.8.4.
+This SDK is compatible with `TypeScript >= 4.8.4`.
 
 ### Installation
 
