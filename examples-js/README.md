@@ -1,6 +1,8 @@
-# @toolhouseai/sdk Example
+# @toolhouseai/sdk JavaScript Examples
 
-This repository demonstrates how to use the `@toolhouseai/sdk` package with Anthropic, OpenAI, and Vercel AI models.
+This repository demonstrates how to use the `@toolhouseai/sdk` package with Anthropic, OpenAI, and Vercel AI models using JavaScript.
+
+For TypeScript Examples, head over to [examples-ts](examples-ts).
 
 ## Setup
 
