@@ -9,7 +9,7 @@ Welcome to the [Toolhouse TypeScript SDK](https://docs.toolhouse.ai/toolhouse/qu
 You can find example code for the following, natively-supported providers below:
 
 - Anthropic Example
-  - [JavaScript]((examples-js/src/anthropicExample.js)) | [TypeScript](examples-ts/src/anthropicExample.ts)
+  - [JavaScript](examples-js/src/anthropicExample.js) | [TypeScript](examples-ts/src/anthropicExample.ts)
 - OpenAI Example
   - [JavaScript](examples-js/src/openaiExample.js) | [TypeScript](examples-ts/src/openaiExample.ts)
 - Vercel AI Example
