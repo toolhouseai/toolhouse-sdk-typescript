@@ -23,7 +23,7 @@ async function main() {
   const message = await client.messages.create({
     max_tokens: 1024,
     messages,
-    model: "claude-3-opus-20240229",
+    model: "claude-3-5-sonnet-20241022",
     tools,
   });
 
@@ -36,7 +36,7 @@ async function main() {
   const chatCompleted = await client.messages.create({
     max_tokens: 1024,
     messages: newMessages,
-    model: "claude-3-opus-20240229",
+    model: "claude-3-5-sonnet-20241022",
     tools,
   });
 
