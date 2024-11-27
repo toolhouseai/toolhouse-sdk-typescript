@@ -16,7 +16,7 @@ async function main() {
   const tools = await toolhouse.getTools()
   const history = [{ role: 'user', content: 'Is 433 a prime number?' }]
   const { text, toolResults } = await generateText({
-    model: anthropic('claude-3-haiku-20240307'),
+    model: anthropic('claude-3-5-sonnet-20241022'),
     tools,
     messages: history
   }) // Pass on the tools to the generateText function
