@@ -18,7 +18,7 @@ async function main() {
   const tools = await toolhouse.getTools()
   const chatCompletion = await client.chat.completions.create({
     messages,
-    model: 'gpt-3.5-turbo',
+    model: 'gpt-4-turbo',
     tools
   })
 
@@ -28,7 +28,7 @@ async function main() {
   const newMessages = [...messages, ...openAiMessage]
   const chatCompleted = await client.chat.completions.create({
     messages: newMessages,
-    model: 'gpt-3.5-turbo',
+    model: 'gpt-4-turbo',
     tools
   })
 
