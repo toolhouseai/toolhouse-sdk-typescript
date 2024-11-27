@@ -4,6 +4,8 @@
 
 Welcome to the [Toolhouse TypeScript SDK](https://docs.toolhouse.ai/toolhouse/quick-start-typescript) documentation. This guide will help you get started with integrating and using the SDK in your project.
 
+![Tool Use](repository-assets/1.png)
+
 You can find example code for the following, natively-supported providers below:
 
 - Anthropic Example
