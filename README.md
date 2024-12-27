@@ -4,6 +4,8 @@
 
 Welcome to the [Toolhouse TypeScript SDK](https://docs.toolhouse.ai/toolhouse/quick-start-typescript) documentation. This guide will help you get started with integrating and using the SDK in your project.
 
+[![Read The Docs](https://img.shields.io/badge/Read%20the%20Documentation-0088ff?style=for-the-badge&logo=read-the-docs)](https://docs.toolhouse.ai/) ![GitHub Release Date](https://img.shields.io/github/release-date/toolhouseai/toolhouse-sdk-typescript?style=for-the-badge) ![GitHub last commit](https://img.shields.io/github/last-commit/toolhouseai/toolhouse-sdk-typescript?style=for-the-badge) ![NPM Downloads](https://img.shields.io/npm/d18m/%40toolhouseai%2Fsdk?style=for-the-badge)
+
 ![Tool Use](repository-assets/1.png)
 
 You can find example code for the following, natively-supported providers below:
@@ -40,7 +42,7 @@ You can find example code for the following, natively-supported providers below:
 
 ## About the API
 
-The Toolhouse API provides access to various AI-powered tools and services, that you can install from the [Tool Store](https://app.toolhouse.ai/store).
+The Toolhouse API provides access to various AI-powered tools and services, that you can find on [Toolhouse](https://app.toolhouse.ai).
 
 ## Setup & Configuration
 
