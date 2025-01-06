@@ -1,21 +1,18 @@
-import { HttpResponse, SdkConfig } from './types';
-import { RequestHandlerChain } from './handlers/handler-chain';
-import { HookHandler } from './handlers/hook-handler';
-import { ResponseValidationHandler } from './handlers/response-validation-handler';
-import { RequestValidationHandler } from './handlers/request-validation-handler';
-import { CustomHook } from './hooks/custom-hook';
-import { TerminatingHandler } from './handlers/terminating-handler';
-import { RetryHandler } from './handlers/retry-handler';
-import { Request } from './transport/request';
-import { AuthHandler } from './handlers/auth-handler';
+import { HttpResponse, SdkConfig } from "./types";
+import { RequestHandlerChain } from "./handlers/handler-chain";
+import { HookHandler } from "./handlers/hook-handler";
+import { ResponseValidationHandler } from "./handlers/response-validation-handler";
+import { RequestValidationHandler } from "./handlers/request-validation-handler";
+import { CustomHook } from "./hooks/custom-hook";
+import { TerminatingHandler } from "./handlers/terminating-handler";
+import { RetryHandler } from "./handlers/retry-handler";
+import { Request } from "./transport/request";
+import { AuthHandler } from "./handlers/auth-handler";
 
 export class HttpClient {
   private readonly requestHandlerChain = new RequestHandlerChain();
 
-  constructor(
-    private config: SdkConfig,
-    hook = new CustomHook(),
-  ) {
+  constructor(private config: SdkConfig, hook = new CustomHook()) {
     this.requestHandlerChain.addHandler(new ResponseValidationHandler());
     this.requestHandlerChain.addHandler(new RequestValidationHandler());
     this.requestHandlerChain.addHandler(new AuthHandler());
@@ -28,11 +25,13 @@ export class HttpClient {
     return this.requestHandlerChain.callChain(request);
   }
 
-  public async callPaginated<FullResponse, Page>(request: Request<FullResponse, Page>): Promise<HttpResponse<Page>> {
+  public async callPaginated<FullResponse, Page>(
+    request: Request<FullResponse, Page>
+  ): Promise<HttpResponse<Page>> {
     const response = await this.call<FullResponse>(request as any);
 
     if (!response.data) {
-      throw new Error('no response data to paginate through');
+      throw new Error("no response data to paginate through");
     }
 
     return {
@@ -49,9 +48,12 @@ export class HttpClient {
     this.config = config;
   }
 
-  private getPage<FullResponse, Page>(request: Request<FullResponse, Page>, data: FullResponse): Page {
+  private getPage<FullResponse, Page>(
+    request: Request<FullResponse, Page>,
+    data: FullResponse
+  ): Page {
     if (!request.pagination) {
-      throw new Error('getPage called for request without pagination property');
+      throw new Error("getPage called for request without pagination property");
     }
 
     let curr: any = data;
@@ -62,7 +64,9 @@ export class HttpClient {
     const page = request.pagination?.pageSchema?.parse(curr);
     if (!page) {
       throw new Error(
-        `error getting page data. Curr: ${JSON.stringify(curr)}. PagePath: ${request.pagination?.pagePath}. Data: ${JSON.stringify(data)}`,
+        `error getting page data. Curr: ${JSON.stringify(curr)}. PagePath: ${
+          request.pagination?.pagePath
+        }. Data: ${JSON.stringify(data)}`
       );
     }
     return page;
