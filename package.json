@@ -1,6 +1,6 @@
 {
   "name": "@toolhouseai/sdk",
-  "version": "1.0.4",
+  "version": "1.1.4",
   "description": "Toolhouse typescript sdk",
   "source": "./src/index.ts",
   "main": "./dist/index.js",
@@ -16,6 +16,9 @@
     "prepublishOnly": "npm run build"
   },
   "keywords": [
+    "toolhouse",
+    "ai tools",
+    "ai function calling",
     "typescript",
     "sdk",
     "api",
