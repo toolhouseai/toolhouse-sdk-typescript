@@ -9,6 +9,12 @@ import Anthropic from '@anthropic-ai/sdk';
 
 export type * from './http';
 
+interface ToolhouseError {
+  metadata: {
+    status: number;
+  };
+}
+
 export class Toolhouse {
   private _provider: ProviderTypes;
   private _metadata: MetadataType;
@@ -89,7 +95,9 @@ export class Toolhouse {
               const { data } = await this.serviceTools.runTools(toolBody, requestConfig)
               return data?.content.content
             } catch (error) {
-              console.error(`Error during tool '${tool.name}' execution:`, error)
+              if (error && (error as ToolhouseError).metadata?.status === 402) {
+                return `ERROR: Notify the user to add Toolhouse Execution credits (Execs) to their account with the message: Unable to execute the ${tool.name} tool. Your account has run out of Toolhouse Execs. Please visit https://app.toolhouse.ai/billing to top up your Execs balance.`
+              }
               return null
             }
           }
