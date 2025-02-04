@@ -96,7 +96,7 @@ export class Toolhouse {
               return data?.content.content
             } catch (error) {
               if (error && (error as ToolhouseError).metadata?.status === 402) {
-                return `ERROR: Notify User that need to add credits to their account with the message <message>Unable to execute ${tool.name} tool. Your account ran out of Toolhouse Execs. Please visit https://app.toolhouse.ai/billing to top up your Execs balance.<\message>`
+                return `ERROR: Notify the user to add Toolhouse Execution credits (Execs) to their account with the message: Unable to execute the ${tool.name} tool. Your account has run out of Toolhouse Execs. Please visit https://app.toolhouse.ai/billing to top up your Execs balance.`
               }
               return null
             }
