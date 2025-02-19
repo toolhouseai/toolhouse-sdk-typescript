@@ -1,13 +1,25 @@
-import { Environment } from './http/environment';
-import { MetadataType, ProviderTypes, RequestConfig, SdkConfig } from './http/types';
-import { GetToolsRequest, OpenAiToolResponse, PublicTool, RunToolsRequest, RunToolsRequestContent, ToolsService } from './services/tools';
-import { CoreTool, jsonSchema } from 'ai';
-import { ToolhouseApiModelsGenericProvider } from './services/tools/models/toolhouse-api-models-providers-providers-tools-anthropic-tool';
-import { readEnv } from './utils';
-import OpenAI from 'openai';
-import Anthropic from '@anthropic-ai/sdk';
+import { Environment } from "./http/environment";
+import {
+  MetadataType,
+  ProviderTypes,
+  RequestConfig,
+  SdkConfig,
+} from "./http/types";
+import {
+  GetToolsRequest,
+  OpenAiToolResponse,
+  PublicTool,
+  RunToolsRequest,
+  RunToolsRequestContent,
+  ToolsService,
+} from "./services/tools";
+import { CoreTool, jsonSchema } from "ai";
+import { ToolhouseApiModelsGenericProvider } from "./services/tools/models/toolhouse-api-models-providers-providers-tools-anthropic-tool";
+import { readEnv } from "./utils";
+import OpenAI from "openai";
+import Anthropic from "@anthropic-ai/sdk";
 
-export type * from './http';
+export type * from "./http";
 
 interface ToolhouseError {
   metadata: {
@@ -25,89 +37,106 @@ export class Toolhouse {
     this.config = {
       ...config,
       baseUrl,
-    }
-    let key = config.apiKey
+    };
+    let key = config.apiKey;
     if (key == null) {
-      const defaultKey = readEnv('TOOLHOUSE_API_KEY')
+      const defaultKey = readEnv("TOOLHOUSE_API_KEY");
       if (defaultKey == null)
-        throw new Error('The api_key client option must be set either by passing api_key to the SDK or by setting the TOOLHOUSE_API_KEY environment variable')
-      key = defaultKey
+        throw new Error(
+          "The api_key client option must be set either by passing api_key to the SDK or by setting the TOOLHOUSE_API_KEY environment variable"
+        );
+      key = defaultKey;
     }
-    this.apiKey = key
-    this._provider = config.provider ?? 'openai'
-    this._metadata = config.metadata ?? {}
+    this.apiKey = key;
+    this._provider = config.provider ?? "openai";
+    this._metadata = config.metadata ?? {};
     this._serviceTools = new ToolsService(this.config);
   }
 
   /**
-  * This endpoint retrieves a list of public tools available on Toolhouse.
-  * @returns {PublicTool[]} Successful Response
-  */
-  async tools(requestConfig?: RequestConfig): Promise<PublicTool[] | undefined> {
-    const { data } = await this.serviceTools.tools(requestConfig)
+   * This endpoint retrieves a list of public tools available on Toolhouse.
+   * @returns {PublicTool[]} Successful Response
+   */
+  async tools(
+    requestConfig?: RequestConfig
+  ): Promise<PublicTool[] | undefined> {
+    const { data } = await this.serviceTools.tools(requestConfig);
 
-    return data
+    return data;
   }
 
   /**
-  * This endpoint retrieves tools from a specific provider.
-  * @returns {Promise<OpenAI.ChatCompletionTool[] | Anthropic.Messages.Tool[] | Record<string, CoreTool<any, any>>>} Successful Response
-  */
+   * This endpoint retrieves tools from a specific provider.
+   * @returns {Promise<OpenAI.ChatCompletionTool[] | Anthropic.Messages.Tool[] | Record<string, CoreTool<any, any>>>} Successful Response
+   */
   async getTools(
     bundle?: string,
     requestConfig?: RequestConfig
-  ): Promise<OpenAI.ChatCompletionTool[] | Anthropic.Messages.Tool[] | Record<string, CoreTool<any, any>>> {
+  ): Promise<
+    | OpenAI.ChatCompletionTool[]
+    | Anthropic.Messages.Tool[]
+    | Record<string, CoreTool<any, any>>
+  > {
     const body: GetToolsRequest = {
       provider: this.provider,
       metadata: this.metadata,
-      bundle: bundle ?? 'default',
+      bundle: bundle ?? "default",
     };
     const { data } = await this.serviceTools.getTools(body, requestConfig);
 
-    if (data == null) return []
+    if (data == null) return [];
 
-    if (this.provider === 'vercel') {
+    if (this.provider === "vercel") {
+      return (data as ToolhouseApiModelsGenericProvider[]).reduce(
+        (tools, tool) => {
+          tools[tool.name] = {
+            description: tool.description,
+            parameters: jsonSchema({
+              type: "object",
+              properties: tool.arguments.reduce((args, argument) => {
+                args[argument.name] = {
+                  type: argument.type,
+                  description: argument.description,
+                };
 
-      return (data as ToolhouseApiModelsGenericProvider[]).reduce((tools, tool) => {
-        tools[tool.name] = {
-          description: tool.description,
-          parameters: jsonSchema({
-            type: 'object',
-            properties: tool.arguments.reduce((args, argument) => {
-              args[argument.name] = {
-                type: argument.type,
-                description: argument.description
+                return args;
+              }, {} as Record<string, { type: "string" | "number" | "boolean" | "object" | "integer" | "array"; description: string }>),
+            }),
+            execute: async (params) => {
+              const toolBody: RunToolsRequest = {
+                provider: this.provider,
+                metadata: this.metadata,
+                bundle: bundle ?? "default",
+                content: {
+                  name: tool.name,
+                  input: params,
+                },
+              };
+              try {
+                const { data } = await this.serviceTools.runTools(
+                  toolBody,
+                  requestConfig
+                );
+                return data?.content.content;
+              } catch (error) {
+                if (
+                  error &&
+                  (error as ToolhouseError).metadata?.status === 402
+                ) {
+                  return `ERROR: Notify the user to add Toolhouse Execution credits (Execs) to their account with the message: Unable to execute the ${tool.name} tool. Your account has run out of Toolhouse Execs. Please visit https://app.toolhouse.ai/billing to top up your Execs balance.`;
+                }
+                return null;
               }
+            },
+          };
 
-              return args
-            }, {} as Record<string, { type: "string" | "number" | "boolean" | "object" | "integer" | "array", description: string }>)
-          }),
-          execute: async (params) => {
-            const toolBody: RunToolsRequest = {
-              provider: this.provider,
-              metadata: this.metadata,
-              content: {
-                name: tool.name,
-                input: params
-              }
-            }
-            try {
-              const { data } = await this.serviceTools.runTools(toolBody, requestConfig)
-              return data?.content.content
-            } catch (error) {
-              if (error && (error as ToolhouseError).metadata?.status === 402) {
-                return `ERROR: Notify the user to add Toolhouse Execution credits (Execs) to their account with the message: Unable to execute the ${tool.name} tool. Your account has run out of Toolhouse Execs. Please visit https://app.toolhouse.ai/billing to top up your Execs balance.`
-              }
-              return null
-            }
-          }
-        }
-
-        return tools
-      }, {} as Record<string, CoreTool<any, any>>)
+          return tools;
+        },
+        {} as Record<string, CoreTool<any, any>>
+      );
     }
 
-    return data as OpenAI.ChatCompletionTool[] | Anthropic.Messages.Tool[]
+    return data as OpenAI.ChatCompletionTool[] | Anthropic.Messages.Tool[];
   }
 
   /**
@@ -118,10 +147,13 @@ export class Toolhouse {
     body: OpenAI.ChatCompletion | Anthropic.Messages.Message,
     append?: boolean,
     requestConfig?: RequestConfig
-  ): Promise<(OpenAiToolResponse | OpenAI.ChatCompletionMessageParam)[] | (Anthropic.Messages.MessageParam)[]> {
-    if (this.provider === 'openai') {
-      if ('choices' in body) {
-        if (body.choices[0].finish_reason !== 'tool_calls') {
+  ): Promise<
+    | (OpenAiToolResponse | OpenAI.ChatCompletionMessageParam)[]
+    | Anthropic.Messages.MessageParam[]
+  > {
+    if (this.provider === "openai") {
+      if ("choices" in body) {
+        if (body.choices[0].finish_reason !== "tool_calls") {
           return [];
         }
 
@@ -141,15 +173,19 @@ export class Toolhouse {
               content,
             };
 
-            const { data } = await this.serviceTools.runTools(toolBody, requestConfig);
+            const { data } = await this.serviceTools.runTools(
+              toolBody,
+              requestConfig
+            );
             return data?.content;
           } catch (error) {
             return undefined;
           }
         });
 
-        const results = (await Promise.all(toolCallsPromises))
-          .filter((result) => result !== undefined) as (OpenAiToolResponse | OpenAI.ChatCompletionMessageParam)[];
+        const results = (await Promise.all(toolCallsPromises)).filter(
+          (result) => result !== undefined
+        ) as (OpenAiToolResponse | OpenAI.ChatCompletionMessageParam)[];
 
         if (append !== false) {
           results.unshift(message);
@@ -157,9 +193,9 @@ export class Toolhouse {
 
         return results;
       }
-    } else if (this.provider === 'anthropic') {
-      if ('content' in body) {
-        if (body.stop_reason !== 'tool_use') {
+    } else if (this.provider === "anthropic") {
+      if ("content" in body) {
+        if (body.stop_reason !== "tool_use") {
           return [];
         }
 
@@ -170,33 +206,42 @@ export class Toolhouse {
         }
 
         const toolCallsPromises = tool_calls.map(async (toolCall) => {
-          if (toolCall.type === 'tool_use') {
+          if (toolCall.type === "tool_use") {
             const content: RunToolsRequestContent = { ...toolCall };
             const toolBody: RunToolsRequest = {
               provider: this.provider,
               metadata: this.metadata,
               content,
             };
-            const { data } = await this.serviceTools.runTools(toolBody, requestConfig)
-            return data?.content
-          } else if (toolCall.type === 'text') {
+            const { data } = await this.serviceTools.runTools(
+              toolBody,
+              requestConfig
+            );
+            return data?.content;
+          } else if (toolCall.type === "text") {
             return undefined;
           } else {
             return undefined;
           }
-        })
+        });
 
-        const results = (await Promise.all(toolCallsPromises))
-          .filter((result) => result !== undefined) as Anthropic.Messages.ToolResultBlockParam[];
+        const results = (await Promise.all(toolCallsPromises)).filter(
+          (result) => result !== undefined
+        ) as Anthropic.Messages.ToolResultBlockParam[];
 
-        const messages: Anthropic.Messages.MessageParam[] = [{ role: 'user', content: results }]
+        const messages: Anthropic.Messages.MessageParam[] = [
+          { role: "user", content: results },
+        ];
 
         if (append !== false) {
-          const message: Anthropic.Messages.MessageParam = { role: 'assistant', content: tool_calls }
-          messages.unshift(message)
+          const message: Anthropic.Messages.MessageParam = {
+            role: "assistant",
+            content: tool_calls,
+          };
+          messages.unshift(message);
         }
 
-        return messages
+        return messages;
       }
     }
 
@@ -232,7 +277,7 @@ export class Toolhouse {
   }
 
   public set metadata(metadata: MetadataType) {
-    this._metadata = { ...this._metadata, ...metadata }
+    this._metadata = { ...this._metadata, ...metadata };
   }
 
   public set provider(provider: ProviderTypes) {
