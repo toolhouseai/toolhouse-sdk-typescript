@@ -13,11 +13,12 @@ import {
   RunToolsRequestContent,
   ToolsService,
 } from "./services/tools";
-import { CoreTool, jsonSchema } from "ai";
-import { ToolhouseApiModelsGenericProvider } from "./services/tools/models/toolhouse-api-models-providers-providers-tools-anthropic-tool";
+import { CoreTool } from "ai";
+import { ToolhouseApiModelsGenericProvider } from "./services/tools/models/toolhouse-api-models-providers-providers-tools-generic-tool";
 import { readEnv } from "./utils";
 import OpenAI from "openai";
 import Anthropic from "@anthropic-ai/sdk";
+import { createVercelTools } from "./vercel";
 
 export type * from "./http";
 
@@ -87,52 +88,13 @@ export class Toolhouse {
     if (data == null) return [];
 
     if (this.provider === "vercel") {
-      return (data as ToolhouseApiModelsGenericProvider[]).reduce(
-        (tools, tool) => {
-          tools[tool.name] = {
-            description: tool.description,
-            parameters: jsonSchema({
-              type: "object",
-              properties: tool.arguments.reduce((args, argument) => {
-                args[argument.name] = {
-                  type: argument.type,
-                  description: argument.description,
-                };
-
-                return args;
-              }, {} as Record<string, { type: "string" | "number" | "boolean" | "object" | "integer" | "array"; description: string }>),
-            }),
-            execute: async (params) => {
-              const toolBody: RunToolsRequest = {
-                provider: this.provider,
-                metadata: this.metadata,
-                bundle: bundle ?? "default",
-                content: {
-                  name: tool.name,
-                  input: params,
-                },
-              };
-              try {
-                const { data } = await this.serviceTools.runTools(
-                  toolBody,
-                  requestConfig
-                );
-                return data?.content.content;
-              } catch (error) {
-                if (
-                  error &&
-                  (error as ToolhouseError).metadata?.status === 402
-                ) {
-                  return `ERROR: Notify the user to add Toolhouse Execution credits (Execs) to their account with the message: Unable to execute the ${tool.name} tool. Your account has run out of Toolhouse Execs. Please visit https://app.toolhouse.ai/billing to top up your Execs balance.`;
-                }
-                return null;
-              }
-            },
-          };
-
-          return tools;
-        },
-        {} as Record<string, CoreTool<any, any>>
+      return createVercelTools(
+        data as ToolhouseApiModelsGenericProvider[],
+        bundle,
+        this.metadata,
+        this.provider,
+        this.serviceTools,
+        requestConfig
       );
     }
 
