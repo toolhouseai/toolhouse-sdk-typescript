@@ -1,54 +1,22 @@
-import { z } from 'zod';
-import { inputSchema, inputSchemaRequest, inputSchemaResponse } from './input-schema';
-import { argumentType } from './argument-type';
+import { z } from "zod";
+import {
+  inputSchema,
+  inputSchemaRequest,
+  inputSchemaResponse,
+} from "./input-schema";
 
 /**
  * The shape of the model inside the application code - what the users use
  */
-export const toolhouseApiModelsGenericProvider = z.lazy(() => { // cambia in generic
-  return z.object({
-    name: z.string(),
-    title: z.string(),
-    description: z.string(),
-    arguments: z.array(genericArgument),
-  });
-});
-
-/**
- * The shape of the model inside the application code - what the users use
- */
-export const genericArgument = z.lazy(() =>
-  z.object({
-    name: z.string(),
-    type: argumentType,
-    description: z.string(),
-    required: z.boolean(),
-  }));
-
-/**
- * Tool Arguments
- * @typedef  {GenericArgument} genericArgument - Tool Arguments - Tool Arguments
- * @property {string}
- * @property {ArgumentType}
- * @property {string}
- * @property {boolean}
- */
-export type GenericArgument = z.infer<typeof genericArgument>;
-
-export type ToolhouseApiModelsGenericProvider = z.infer<
-  typeof toolhouseApiModelsGenericProvider
->;
-
-/**
- * The shape of the model inside the application code - what the users use
- */
-export const toolhouseApiModelsProvidersProvidersToolsAnthropicTool = z.lazy(() => {
-  return z.object({
-    name: z.string(),
-    description: z.string(),
-    input_schema: inputSchema,
-  });
-});
+export const toolhouseApiModelsProvidersProvidersToolsAnthropicTool = z.lazy(
+  () => {
+    return z.object({
+      name: z.string(),
+      description: z.string(),
+      input_schema: inputSchema,
+    });
+  }
+);
 
 /**
  *
@@ -65,34 +33,36 @@ export type ToolhouseApiModelsProvidersProvidersToolsAnthropicTool = z.infer<
  * The shape of the model mapping from the api schema into the application shape.
  * Is equal to application shape if all property names match the api schema
  */
-export const toolhouseApiModelsProvidersProvidersToolsAnthropicToolResponse = z.lazy(() => {
-  return z
-    .object({
-      name: z.string(),
-      description: z.string(),
-      input_schema: inputSchemaResponse,
-    })
-    .transform((data) => ({
-      name: data['name'],
-      description: data['description'],
-      input_schema: data['input_schema'],
-    }));
-});
+export const toolhouseApiModelsProvidersProvidersToolsAnthropicToolResponse =
+  z.lazy(() => {
+    return z
+      .object({
+        name: z.string(),
+        description: z.string(),
+        input_schema: inputSchemaResponse,
+      })
+      .transform((data) => ({
+        name: data["name"],
+        description: data["description"],
+        input_schema: data["input_schema"],
+      }));
+  });
 
 /**
  * The shape of the model mapping from the application shape into the api schema.
  * Is equal to application shape if all property names match the api schema
  */
-export const toolhouseApiModelsProvidersProvidersToolsAnthropicToolRequest = z.lazy(() => {
-  return z
-    .object({
-      name: z.string().nullish(),
-      description: z.string().nullish(),
-      input_schema: inputSchemaRequest.nullish(),
-    })
-    .transform((data) => ({
-      name: data['name'],
-      description: data['description'],
-      input_schema: data['input_schema'],
-    }));
-});
+export const toolhouseApiModelsProvidersProvidersToolsAnthropicToolRequest =
+  z.lazy(() => {
+    return z
+      .object({
+        name: z.string().nullish(),
+        description: z.string().nullish(),
+        input_schema: inputSchemaRequest.nullish(),
+      })
+      .transform((data) => ({
+        name: data["name"],
+        description: data["description"],
+        input_schema: data["input_schema"],
+      }));
+  });
